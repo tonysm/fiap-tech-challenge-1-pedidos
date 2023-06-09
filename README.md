@@ -5,31 +5,18 @@ Repositório do tech challenge 1 da FIAP/Alura. Repositório de testes.
 ## Installation
 
 ```bash
-$ npm install
+cp .env.example .env
+docker-compose up -d
 ```
 
-## Running the app
+## Building the Production Image
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+docker build -t fiap-pedidos-app .
 ```
 
 ## Test
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker compose exec api npm run test
 ```
