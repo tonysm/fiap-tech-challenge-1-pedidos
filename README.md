@@ -6,7 +6,7 @@ Repositório do tech challenge 1 da FIAP/Alura. Repositório de testes.
 
 ```bash
 cp .env.example .env
-docker-compose up -d
+docker compose up -d
 ```
 
 ## Building the Production Image
