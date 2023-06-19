@@ -5,12 +5,11 @@ import { AppService } from './app.service';
 import { PedidosModule } from './pedidos/pedidos.module';
 import { ProdutosModule } from './produtos/produtos.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ClientesModule } from './clientes/clientes.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    PedidosModule,
-    ProdutosModule,
     TypeOrmModule.forRootAsync({
         imports: [ConfigModule],
         useFactory(configService: ConfigService) {
@@ -27,6 +26,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         },
         inject: [ConfigService],
     }),
+    PedidosModule,
+    ProdutosModule,
+    ClientesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
