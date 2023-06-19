@@ -1,7 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, Query } from '@nestjs/common';
 import { ProdutosService } from './produtos.service';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
+import { ListProdutoDto } from './dto/list-produto.dto';
+import { Categoria } from './entities/produto.entity';
+import { ApiQuery } from '@nestjs/swagger';
 
 @Controller('produtos')
 export class ProdutosController {
@@ -13,13 +16,24 @@ export class ProdutosController {
   }
 
   @Get()
-  findAll() {
+  @ApiQuery({ name: 'categoria', required: false, type: 'enum', enum: Categoria })
+  findAll(@Query('categoria') categoria: Categoria) {
+    if (categoria) {
+        return this.produtosService.findAllByCategoria(categoria);
+    }
+
     return this.produtosService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.produtosService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const produto = await this.produtosService.findOne(+id);
+
+    if (! produto) {
+        throw new HttpException('Produto não encontrado', HttpStatus.NOT_FOUND)
+    }
+
+    return produto
   }
 
   @Patch(':id')
