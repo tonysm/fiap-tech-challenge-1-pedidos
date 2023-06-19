@@ -24,6 +24,12 @@ export class ClientesService {
     return await this.clientsRepository.findOneBy({ id: id })
   }
 
+  async findByCpf(cpf: string) {
+    return await this.clientsRepository.createQueryBuilder('cliente')
+        .where('cliente.cpf = :cpf', { cpf })
+        .getOne()
+  }
+
   update(id: number, input: UpdateClienteDto) {
     this.clientsRepository.update({ id }, input)
   }

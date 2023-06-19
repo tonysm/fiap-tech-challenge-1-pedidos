@@ -21,6 +21,17 @@ export class ClientesController {
     return this.clientesService.findAll();
   }
 
+  @Get('cpf/:cpf')
+  async findByCpf(@Param('cpf') cpf: string) {
+    const cliente = await this.clientesService.findByCpf(cpf);
+
+    if (! cliente) {
+        throw new HttpException("Cliente não encontrado", HttpStatus.NOT_FOUND);
+    }
+
+    return cliente;
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const cliente = await this.clientesService.findOne(+id);

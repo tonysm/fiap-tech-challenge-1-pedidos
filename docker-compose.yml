@@ -12,7 +12,9 @@ services:
     ports:
       - 3000:3000
     networks:
-      - techchallenge
+      - fiap
+    depends_on:
+      - db
   db:
     image: mysql/mysql-server:8.0
     ports:
@@ -27,15 +29,14 @@ services:
     volumes:
       - 'db-data:/var/lib/mysql'
     networks:
-      - techchallenge
+      - fiap
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}"]
       retries: 3
       timeout: 5s
 
 networks:
-  techchallenge:
-    driver: bridge
+  fiap:
 
 volumes:
   db-data:
