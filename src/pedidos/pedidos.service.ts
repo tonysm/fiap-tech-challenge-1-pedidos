@@ -1,15 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { Pedido } from './entities/pedido.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class PedidosService {
-  private readonly pedidos: Pedido[] = [];
+  constructor(
+    @InjectRepository(Pedido)
+    private repository: Repository<Pedido>
+  ) {}
 
-  create(createPedidoDto: CreatePedidoDto): Pedido {
-    let pedido = new Pedido();
-    pedido.id = 123;
-    this.pedidos.push(pedido);
-    return pedido;
+  findAll() {
+    return this.repository.find({ loadEagerRelations: true })
+  }
+
+  create(input: CreatePedidoDto) {
+    return this.repository.save(input);
   }
 }
