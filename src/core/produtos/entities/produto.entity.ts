@@ -25,4 +25,21 @@ export class Produto {
     @Column()
     @ApiProperty({ example: 'Pão de batata, molho de tomate, queijo mussarela, finíssimas fatias de cebola, ovo, azeitonas verde, milho verde e rodelas de linguiça calabresa defumada', description: 'A descrição do produto'})
     descricao: String;
+
+
+    static createFrom({ nome, categoria, descricao }: { nome: String, categoria: Categoria, descricao: String }) {
+        const produto = new Produto();
+
+        produto.fill({ nome, categoria, descricao })
+
+        return produto;
+    }
+
+    fill({ nome, categoria, descricao }: { nome: String, categoria: Categoria, descricao: String }) {
+        this.nome = nome
+        this.categoria = categoria
+        this.descricao = descricao
+
+        return this
+    }
 }
