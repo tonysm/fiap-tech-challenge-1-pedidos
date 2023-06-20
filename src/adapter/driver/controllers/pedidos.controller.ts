@@ -1,13 +1,15 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Pedido } from './entities/pedido.entity';
-import { PedidosService } from './pedidos.service';
-import { CreatePedidoDto } from './dto/create-pedido.dto';
+import { Pedido } from '../../../core/pedidos/entities/pedido.entity';
+import { PedidosService } from '../../../core/pedidos/pedidos.service';
+import { CreatePedidoDto } from '../../../core/pedidos/dto/create-pedido.dto';
 
 @Controller('pedidos')
 @ApiTags('pedidos')
 export class PedidosController {
-    constructor(private readonly pedidosService: PedidosService) {}
+    constructor(
+      private readonly pedidosService: PedidosService
+    ) {}
 
     @Get()
     @ApiOperation({ summary: "Lista os pedidos" })

@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
-import { ClientesService } from './clientes.service';
-import { CreateClienteDto } from './dto/create-cliente.dto';
-import { UpdateClienteDto } from './dto/update-cliente.dto';
+import { ClientesService } from '../../../core/clientes/clientes.service';
+import { CreateClienteDto } from '../../../core/clientes/dto/create-cliente.dto';
+import { UpdateClienteDto } from '../../../core/clientes/dto/update-cliente.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('clientes')

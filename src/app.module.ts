@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { PedidosModule } from './pedidos/pedidos.module';
-import { ProdutosModule } from './produtos/produtos.module';
+import { AppController } from './adapter/driver/controllers/app.controller';
+import { PedidosModule } from './core/pedidos/pedidos.module';
+import { ProdutosModule } from './core/produtos/produtos.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ClientesModule } from './clientes/clientes.module';
+import { ClientesModule } from './core/clientes/clientes.module';
 
 @Module({
   imports: [
@@ -20,7 +19,7 @@ import { ClientesModule } from './clientes/clientes.module';
                 username: configService.get<string>('DB_USERNAME'),
                 password: configService.get<string>('DB_PASSWORD'),
                 database: configService.get<string>('DB_DATABASE'),
-                entities: [__dirname + '/**/*.entity{.ts,.js}'],
+                entities: [__dirname + '/core/**/*.entity{.ts,.js}'],
                 synchronize: true,
             }
         },
@@ -31,6 +30,6 @@ import { ClientesModule } from './clientes/clientes.module';
     ClientesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [],
 })
 export class AppModule {}

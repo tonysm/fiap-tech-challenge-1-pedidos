@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PedidosController } from './pedidos.controller';
+import { PedidosController } from '../../adapter/driver/controllers/pedidos.controller';
 import { PedidosService } from './pedidos.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Pedido } from './entities/pedido.entity';
