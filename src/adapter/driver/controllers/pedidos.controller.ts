@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Pedido } from '../../../core/pedidos/entities/pedido.entity';
 import { PedidosService } from '../../../core/pedidos/pedidos.service';
@@ -29,4 +29,27 @@ export class PedidosController {
     async create(@Body() input: CreatePedidoDto) {
       return this.pedidosService.create(input);
     }
+
+    @Put("iniciar-preparacao/:id")
+    @ApiOperation({ summary: 'Atualiza a etapa do pedido para em preparação' })
+    @ApiResponse({ status: 200  })
+    async iniciarPreparacaoDoPedido(@Param('id') id: number) {
+      return this.pedidosService.iniciarPreparacaoDoPedido(id)
+    }
+
+
+    @Put("encerrar-preparacao/:id")
+    @ApiOperation({ summary: 'Atualiza a etapa do pedido para pronto' })
+    @ApiResponse({ status: 200 })
+    async encerrarPreparacaoDoPedido(@Param('id') id: number) {
+      return this.pedidosService.encerrarPreparacaoDoPedido(id)
+    }
+
+    @Put("finalizar/:id")
+    @ApiOperation({ summary: 'Atualiza a etapa do pedido para finalizado' })
+    @ApiResponse({ status: 200 })
+    async finalizarPedido(@Param('id') id: number) {
+      return this.pedidosService.finalizarPedido(id)
+    }
+
 }

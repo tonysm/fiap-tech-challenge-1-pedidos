@@ -16,7 +16,8 @@ export class ProdutosService {
     return this.repository.save(Produto.createFrom({
       nome: input.nome,
       categoria: input.categoria,
-      descricao: input.descricao
+      descricao: input.descricao,
+      precoUnitario: input.precoUnitario
     }))
   }
 
@@ -32,14 +33,14 @@ export class ProdutosService {
     return this.repository.findById(id)
   }
 
-  async update(id: number, { nome, categoria, descricao }: UpdateProdutoDto) {
+  async update(id: number, { nome, categoria, descricao, precoUnitario }: UpdateProdutoDto) {
     const produto  = await this.repository.findById(id)
 
     if(! produto) {
       throw new ProdutoNaoEncontrado
     }
 
-    this.repository.save(produto.fill({nome, categoria, descricao}))
+    this.repository.save(produto.fill({nome, categoria, descricao, precoUnitario}))
   }
 
   remove(id: number) {

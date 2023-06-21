@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { IsNumber } from "class-validator";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 export enum Categoria {
@@ -26,19 +27,24 @@ export class Produto {
     @ApiProperty({ example: 'Pão de batata, molho de tomate, queijo mussarela, finíssimas fatias de cebola, ovo, azeitonas verde, milho verde e rodelas de linguiça calabresa defumada', description: 'A descrição do produto'})
     descricao: String;
 
+    @IsNumber()
+    @Column({type: "decimal", precision: 10, scale: 2})
+    precoUnitario: number;
 
-    static createFrom({ nome, categoria, descricao }: { nome: String, categoria: Categoria, descricao: String }) {
+
+    static createFrom({ nome, categoria, descricao, precoUnitario }: { nome: String, categoria: Categoria, descricao: String, precoUnitario: number }) {
         const produto = new Produto();
 
-        produto.fill({ nome, categoria, descricao })
+        produto.fill({ nome, categoria, descricao, precoUnitario })
 
         return produto;
     }
 
-    fill({ nome, categoria, descricao }: { nome: String, categoria: Categoria, descricao: String }) {
+    fill({ nome, categoria, descricao, precoUnitario }: { nome: String, categoria: Categoria, descricao: String, precoUnitario: number }) {
         this.nome = nome
         this.categoria = categoria
         this.descricao = descricao
+        this.precoUnitario = precoUnitario
 
         return this
     }

@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Pedido } from "./pedido.entity";
-import { IsInt, IsString, Max, Min } from "class-validator";
+import { IsInt, IsNumber, IsString, Max, Min } from "class-validator";
 import { Produto } from "src/core/produtos/entities/produto.entity";
 
 @Entity()
@@ -14,7 +14,7 @@ export class Item {
     @JoinColumn()
     pedido: Pedido;
 
-    @OneToOne(() => Produto, {nullable: false, eager: true})
+    @ManyToOne(() => Produto, {nullable: false, eager: true})
     @JoinColumn()
     produto: Produto;
 
@@ -27,4 +27,8 @@ export class Item {
     @IsString()
     @Column({ nullable: true })
     observacao: string;
+
+    @IsNumber()
+    @Column({type: "decimal", precision: 10, scale: 2})
+    precoUnitario: number;
 }
