@@ -12,6 +12,7 @@ import { ClientesRepository } from 'src/adapter/driven/infrastructure/repositori
   providers: [ClientesRepository, ClientesService, {
     provide: ClientesRepositoryInterface,
     useClass: ClientesRepository,
-  }]
+  }],
+  exports: [ClientesRepository]
 })
 export class ClientesModule {}

@@ -12,6 +12,7 @@ import { ProdutosRepositoryInterface } from './repositories/produtos.repository'
   providers: [ProdutosRepository, ProdutosService, {
     provide: ProdutosRepositoryInterface,
     useClass: ProdutosRepository,
-  }]
+  }],
+  exports: [ProdutosRepository]
 })
 export class ProdutosModule {}

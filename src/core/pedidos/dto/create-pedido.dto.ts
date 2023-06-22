@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Cliente } from 'src/core/clientes/entities/cliente.entity';
 import { Item } from '../entities/item.entity';
+import { CreatePedidoItemDto } from './create-pedido-item.dto';
 
 export class CreatePedidoDto {
     @ApiProperty({ name: 'clienteId', example: 1, description: 'O ID do cliente (opcional)' })
-    cliente?: Cliente;
+    clienteId?: number;
 
     @ApiProperty({
         example: [
@@ -16,5 +16,5 @@ export class CreatePedidoDto {
         ],
         description: 'A lista de itens do pedido',
     })
-    items: Item[];
+    items: CreatePedidoItemDto[];
 }
