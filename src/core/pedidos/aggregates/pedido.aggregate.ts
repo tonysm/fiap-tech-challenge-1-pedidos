@@ -13,7 +13,7 @@ export class PedidoAggregate extends IdentifiableObject {
     ) {
         super()
     }
-    
+
     iniciarPreparacaoDoPedido() {
         if(this.status != Status.RECEBIDO) {
             throw new StatusInvalidoParaIniciarPreparacao

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateClienteDto } from './dto/create-cliente.dto';
-import { UpdateClienteDto } from './dto/update-cliente.dto';
+import { CreateClienteDto } from '../../adapter/driver/controllers/dto/create-cliente.dto';
+import { UpdateClienteDto } from 'src/adapter/driver/controllers/dto/update-cliente.dto';
 import { ClientesRepositoryInterface } from './repositories/clientes.repository';
 import { Cliente } from './entities/cliente.entity';
 import { ClienteNaoEncontrado } from './exceptions/cliente.exception';

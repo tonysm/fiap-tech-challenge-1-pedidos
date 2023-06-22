@@ -1,6 +1,6 @@
 import { Cliente } from "src/core/clientes/entities/cliente.entity";
 import { ItemVO } from "../vo/item.vo";
-import { CreatePedidoDto } from "../dto/create-pedido.dto";
+import { CreatePedidoDto } from "src/adapter/driver/controllers/dto/create-pedido.dto";
 import { PedidoAggregate } from "./pedido.aggregate";
 import { Inject, Injectable } from "@nestjs/common";
 import { ProdutosRepository } from "src/adapter/driven/infrastructure/repositories/produtos.repository";
