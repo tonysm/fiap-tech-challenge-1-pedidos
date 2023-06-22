@@ -20,6 +20,12 @@ export class StatusInvalidoParaFinalizado extends PedidoException {
     }
 }
 
+export class StatusInvalidoException extends PedidoException {
+    constructor () {
+        super('Status desconhecido', HttpStatus.BAD_REQUEST);
+    }
+}
+
 export class PedidoNaoEncontrado extends PedidoException {
     constructor() {
         super('Pedido não encontrado', HttpStatus.NOT_FOUND)

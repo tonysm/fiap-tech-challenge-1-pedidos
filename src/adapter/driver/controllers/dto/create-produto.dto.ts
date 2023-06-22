@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNumber, IsString } from "class-validator";
-import { Categoria } from "../entities/produto.entity";
+import { Categoria } from "../../../../core/produtos/entities/produto.entity";
 
 export class CreateProdutoDto {
     @IsString()

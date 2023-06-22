@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, Query } from '@nestjs/common';
 import { ProdutosService } from 'src/core/produtos/produtos.service';
-import { CreateProdutoDto } from 'src/core/produtos/dto/create-produto.dto';
-import { UpdateProdutoDto } from 'src/core/produtos/dto/update-produto.dto';
+import { CreateProdutoDto } from './dto/create-produto.dto';
+import { UpdateProdutoDto } from './dto/update-produto.dto';
 import { Categoria } from 'src/core/produtos/entities/produto.entity';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
