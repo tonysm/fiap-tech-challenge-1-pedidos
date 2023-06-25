@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Cliente } from 'src/core/clientes/entities/cliente.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Item } from './item.entity';
 
 export enum Status {
@@ -9,6 +9,12 @@ export enum Status {
   EM_PREPARACAO = 'EM_PREPARACAO',
   PRONTO = 'PRONTO',
   FINALIZADO = 'FINALIZADO'
+}
+
+export enum StatusPagamento {
+  PENDENTE = 'PENDENTE',
+  SUCESSO = 'SUCESSO',
+  FALHOU = 'FALHOU',
 }
 
 @Entity()
@@ -28,4 +34,8 @@ export class Pedido {
   @Column({ type: 'enum', enum: Status })
   @ApiProperty({ example: Status.EM_PREPARACAO, description: 'O status atual do produto', enum: Status })
   status: Status;
+
+  @Column({ type: 'enum', enum: StatusPagamento, default: StatusPagamento.PENDENTE })
+  @ApiProperty({ example: StatusPagamento.PENDENTE, description: 'O status do pagamento do pedido', enum: StatusPagamento })
+  statusPagamento: StatusPagamento;
 }

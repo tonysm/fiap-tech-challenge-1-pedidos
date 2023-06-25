@@ -8,6 +8,7 @@ import { PedidoNaoEncontrado, StatusInvalidoException } from './exceptions/pedid
 import { ItemVO } from './vo/item.vo';
 import { Item } from './entities/item.entity';
 import { UpdatePedidoItemDto } from 'src/adapter/driver/controllers/dto/update-pedido-item.dto';
+import { PaymentGateway } from '../payments/payment.gateway';
 
 @Injectable()
 export class PedidosService {
@@ -62,6 +63,16 @@ export class PedidosService {
     aggregate.removeItem(id)
 
     this.items.delete({ id })
+  }
+
+  async confirmaPagamento(pedidoId: number, payments: PaymentGateway) {
+    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId)
+
+    payments.checkout(aggregate);
+
+    aggregate.confirmaPagamento();
+
+    return this.repository.save(aggregate.toEntity())
   }
 
   async atualizaStatusDoPedido(id: number, status: Status) {

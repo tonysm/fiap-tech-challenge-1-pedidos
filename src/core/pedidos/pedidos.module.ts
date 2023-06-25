@@ -9,10 +9,17 @@ import { ClientesModule } from '../clientes/clientes.module';
 import { PedidoAggregateFactory } from './aggregates/pedido.aggregate.factory';
 import { PedidoItemsController } from 'src/adapter/driver/controllers/pedido_items.controller';
 import { ProdutosService } from '../produtos/produtos.service';
+import { PaymentGateway } from '../payments/payment.gateway';
+import { FakePaymentGateway } from '../payments/fake_payment.gateway';
+import { PedidosConfirmadosController } from 'src/adapter/driver/controllers/pedidos_confirmados.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Pedido, Item]), ProdutosModule, ClientesModule],
-  controllers: [PedidosController, PedidoItemsController],
-  providers: [PedidoAggregateFactory, PedidosService, ProdutosService],
+  controllers: [PedidosController, PedidoItemsController, PedidosConfirmadosController],
+  providers: [PedidoAggregateFactory, PedidosService, ProdutosService, {
+    provide: PaymentGateway,
+    useClass: FakePaymentGateway,
+  }],
+  exports: [PaymentGateway],
 })
 export class PedidosModule {}

@@ -1,12 +1,13 @@
 import { Cliente } from "src/core/clientes/entities/cliente.entity";
 import { ItemVO } from "../vo/item.vo";
-import { Pedido, Status } from "../entities/pedido.entity";
+import { Pedido, Status, StatusPagamento } from "../entities/pedido.entity";
 import { IdentifiableObject } from "src/core/bases/identifiable.object";
 import { NaoPodeAlterarPedido, StatusInvalidoParaFinalizado, StatusInvalidoParaIniciarPreparacao, StatusInvalidoParaPronto } from "../exceptions/pedido.exception";
 
 export class PedidoAggregate extends IdentifiableObject {
   constructor(
     private status: Status,
+    private statusPagamento: StatusPagamento,
     private items: ItemVO[],
     private cliente?: Cliente,
   ) {
@@ -65,6 +66,14 @@ export class PedidoAggregate extends IdentifiableObject {
     this.items = this.items.filter((item) => item.id != itemId)
   }
 
+  confirmaPagamento() {
+    if (this.statusPagamento !== StatusPagamento.PENDENTE) throw new NaoPodeAlterarPedido;
+    if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido;
+
+    this.statusPagamento = StatusPagamento.SUCESSO;
+    this.status = Status.RECEBIDO;
+  }
+
   toEntity(): Pedido {
     const pedido = new Pedido()
 
@@ -72,6 +81,7 @@ export class PedidoAggregate extends IdentifiableObject {
     pedido.cliente = this.cliente
     pedido.items = this.items.map(item => item.toEntity());
     pedido.status = this.status
+    pedido.statusPagamento = this.statusPagamento
 
     return pedido
   }
