@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePedidoDto } from 'src/adapter/driver/controllers/dto/create-pedido.dto';
-import { Pedido, Status } from './entities/pedido.entity';
+import { Pedido, Status, StatusPagamento } from './entities/pedido.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PedidoAggregateFactory } from './aggregates/pedido.aggregate.factory';
@@ -9,6 +9,7 @@ import { ItemVO } from './vo/item.vo';
 import { Item } from './entities/item.entity';
 import { UpdatePedidoItemDto } from 'src/adapter/driver/controllers/dto/update-pedido-item.dto';
 import { PaymentGateway } from '../payments/payment.gateway';
+import { Cliente } from '../clientes/entities/cliente.entity';
 
 @Injectable()
 export class PedidosService {
@@ -22,6 +23,14 @@ export class PedidosService {
 
   findAll() {
     return this.repository.find({ loadEagerRelations: true })
+  }
+
+  findAllParaCozinha() {
+    return this.repository.createQueryBuilder('pedido')
+        .where('pedido.status NOT IN (:status)', { status: [Status.CRIANDO, Status.FINALIZADO] })
+        .innerJoinAndSelect("pedido.items", "item")
+        .innerJoinAndSelect("pedido.cliente", "cliente")
+        .getMany()
   }
 
   async findOne(id: number) {
