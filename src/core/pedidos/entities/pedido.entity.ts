@@ -4,6 +4,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGene
 import { Item } from './item.entity';
 
 export enum Status {
+  CRIANDO = 'CRIANDO',
   RECEBIDO = 'RECEBIDO',
   EM_PREPARACAO = 'EM_PREPARACAO',
   PRONTO = 'PRONTO',

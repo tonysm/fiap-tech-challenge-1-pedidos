@@ -7,3 +7,9 @@ export class ProdutoNaoEncontrado extends ProdutoException {
         super('Produto não encontrado', HttpStatus.NOT_FOUND)
     }
 }
+
+export class ItemNaoEncontrado extends ProdutoException {
+    constructor () {
+        super('Item não encontrado', HttpStatus.NOT_FOUND)
+    }
+}

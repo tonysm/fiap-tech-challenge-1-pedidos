@@ -26,29 +26,15 @@ export class PedidoAggregateFactory {
     ) { }
 
     async createNew(input: CreatePedidoDto): Promise<PedidoAggregate> {
-        const itemVO = await Promise.all(input.items.map(async element => {
-            const produto = await this.produtosRepository.findById(element.produtoId)
-
-            if (!produto) {
-                throw new ProdutoNaoEncontrado
-            }
-
-            return new ItemVO(
-                element.quantidade,
-                produto,
-                element.observacao,
-                produto.precoUnitario
-            )
-        }));
-
         let cliente: Cliente = null
+
         if (input.clienteId) {
             cliente = await this.clientesRepository.findById(input.clienteId)
         }
 
         return new PedidoAggregate(
-            Status.RECEBIDO,
-            itemVO,
+            Status.CRIANDO,
+            [],
             cliente
         )
     }

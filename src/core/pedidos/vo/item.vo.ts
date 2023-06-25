@@ -1,21 +1,22 @@
 import { Produto } from "src/core/produtos/entities/produto.entity";
 import { Item as ItemEntity } from "../entities/item.entity";
-import { Entity } from "typeorm";
 import { IdentifiableObject } from "src/core/bases/identifiable.object";
 
 export class ItemVO extends IdentifiableObject {
     constructor (
-        private quantidade: number,
-        private produto: Produto,
-        private observacao: string,
-        private precoUnitario: number
+        public readonly quantidade: number,
+        public readonly produto: Produto,
+        public readonly observacao: string,
+        public readonly precoUnitario: number,
+        id?: number,
     ) {
         super()
+
+        this.id = id;
     }
 
     toEntity(entity?: ItemEntity): ItemEntity {
-
-        if(entity == null) {
+        if (entity == null) {
             entity = new ItemEntity()
         }
 

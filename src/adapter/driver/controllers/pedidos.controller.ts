@@ -9,7 +9,7 @@ import { UpdateEtapaPedido } from './dto/update-etapa-pedido.dto';
 @ApiTags('pedidos')
 export class PedidosController {
     constructor(
-      private readonly pedidosService: PedidosService
+      private readonly pedidosService: PedidosService,
     ) {}
 
     @Get()
@@ -20,7 +20,7 @@ export class PedidosController {
         type: Array<Pedido>,
     })
     index() {
-        return this.pedidosService.findAll()
+      return this.pedidosService.findAll()
     }
 
     @Post()
@@ -29,6 +29,11 @@ export class PedidosController {
     @ApiResponse({ status: 200, type: Pedido })
     async create(@Body() input: CreatePedidoDto) {
       return this.pedidosService.create(input);
+    }
+
+    @Get(':id')
+    show(@Param('id') id: number) {
+      return this.pedidosService.findOne(id);
     }
 
     @Put(":id/status")
