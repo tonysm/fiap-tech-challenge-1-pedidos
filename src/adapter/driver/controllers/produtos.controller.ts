@@ -19,7 +19,7 @@ export class ProdutosController {
   @ApiQuery({ name: 'categoria', required: false, type: 'enum', enum: Categoria })
   findAll(@Query('categoria') categoria: Categoria) {
     if (categoria) {
-        return this.produtosService.findAllByCategoria(categoria);
+      return this.produtosService.findAllByCategoria(categoria);
     }
 
     return this.produtosService.findAll();
@@ -29,9 +29,7 @@ export class ProdutosController {
   async findOne(@Param('id') id: string) {
     const produto = await this.produtosService.findOne(+id);
 
-    if (! produto) {
-        throw new HttpException('Produto não encontrado', HttpStatus.NOT_FOUND)
-    }
+    if (! produto) throw new HttpException('Produto não encontrado', HttpStatus.NOT_FOUND)
 
     return produto
   }

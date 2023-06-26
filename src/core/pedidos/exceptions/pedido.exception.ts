@@ -31,3 +31,9 @@ export class PedidoNaoEncontrado extends PedidoException {
         super('Pedido não encontrado', HttpStatus.NOT_FOUND)
     }
 }
+
+export class NaoPodeAlterarPedido extends PedidoException {
+    constructor() {
+        super('Pedido não pode ser alterdo', HttpStatus.BAD_REQUEST)
+    }
+}
