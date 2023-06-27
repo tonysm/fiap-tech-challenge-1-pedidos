@@ -35,7 +35,7 @@ export class PedidoNaoEncontrado extends PedidoException {
 
 export class NaoPodeAlterarPedido extends PedidoException {
     constructor() {
-        super('Pedido não pode ser alterdo', HttpStatus.BAD_REQUEST)
+        super('Pedido não pode ser alterado', HttpStatus.BAD_REQUEST)
     }
 }
 

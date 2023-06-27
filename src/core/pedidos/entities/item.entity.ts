@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Pedido } from "./pedido.entity";
 import { IsInt, IsNumber, IsString, Max, Min } from "class-validator";
 import { Produto } from "src/core/produtos/entities/produto.entity";
@@ -10,7 +10,7 @@ export class Item {
     @ApiProperty({ example: 1, description: 'O ID do item to pedido' })
     id: number;
 
-    @ManyToOne(() => Pedido, (pedido) => pedido.items, { nullable: false })
+    @ManyToOne(() => Pedido, (pedido) => pedido.itens, { nullable: false })
     @JoinColumn()
     pedido: Pedido;
 

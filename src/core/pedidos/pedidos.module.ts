@@ -7,7 +7,7 @@ import { Item } from './entities/item.entity';
 import { ProdutosModule } from '../produtos/produtos.module';
 import { ClientesModule } from '../clientes/clientes.module';
 import { PedidoAggregateFactory } from './aggregates/pedido.aggregate.factory';
-import { PedidoItemsController } from 'src/adapter/driver/controllers/pedido_items.controller';
+import { PedidoItensController } from 'src/adapter/driver/controllers/pedido_itens.controller';
 import { ProdutosService } from '../produtos/produtos.service';
 import { PagamentoGateway } from '../pagamentos/pagamento.gateway';
 import { PagamentoFakeGateway } from '../../adapter/driven/infrastructure/pagamentos/pagmento-fake.gateway';
@@ -16,7 +16,7 @@ import { FilaCozinhaController } from 'src/adapter/driver/controllers/fila_cozin
 
 @Module({
   imports: [TypeOrmModule.forFeature([Pedido, Item]), ProdutosModule, ClientesModule],
-  controllers: [PedidosController, PedidoItemsController, PedidosConfirmadosController, FilaCozinhaController],
+  controllers: [PedidosController, PedidoItensController, PedidosConfirmadosController, FilaCozinhaController],
   providers: [PedidoAggregateFactory, PedidosService, ProdutosService, {
     provide: PagamentoGateway,
     useClass: PagamentoFakeGateway,

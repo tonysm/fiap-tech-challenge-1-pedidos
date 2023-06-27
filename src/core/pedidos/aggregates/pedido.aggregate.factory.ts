@@ -44,7 +44,7 @@ export class PedidoAggregateFactory {
 
     if (! pedido) throw new PedidoNaoEncontrado
 
-    const itemsVO = pedido.items.map(element => {
+    const itensVO = pedido.itens.map(element => {
       const itemVO = new ItemVO(
         element.quantidade,
         element.produto,
@@ -58,7 +58,7 @@ export class PedidoAggregateFactory {
     const aggregate = new PedidoAggregate(
       pedido.status,
       pedido.statusPagamento,
-      itemsVO,
+      itensVO,
       pedido.cliente,
     )
 

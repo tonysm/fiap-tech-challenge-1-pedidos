@@ -8,9 +8,9 @@ import { ProdutoNaoEncontrado } from 'src/core/produtos/exceptions/produto.excep
 import { ItemVO } from 'src/core/pedidos/vo/item.vo';
 import { UpdatePedidoItemDto } from './dto/update-pedido-item.dto';
 
-@Controller('pedidos/:pedido/items')
+@Controller('pedidos/:pedido/itens')
 @ApiTags('pedidos')
-export class PedidoItemsController {
+export class PedidoItensController {
   constructor(
     private readonly service: PedidosService,
     private readonly produtos: ProdutosService,

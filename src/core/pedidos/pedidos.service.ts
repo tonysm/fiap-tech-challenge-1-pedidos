@@ -16,7 +16,7 @@ export class PedidosService {
     @InjectRepository(Pedido)
     private repository: Repository<Pedido>,
     @InjectRepository(Item)
-    private items: Repository<Item>,
+    private itens: Repository<Item>,
     private readonly pedidoAggregateFactory: PedidoAggregateFactory
   ) {}
 
@@ -27,7 +27,7 @@ export class PedidosService {
   findAllParaCozinha() {
     return this.repository.createQueryBuilder('pedido')
         .where('pedido.status NOT IN (:status)', { status: [Status.CRIANDO, Status.FINALIZADO] })
-        .innerJoinAndSelect("pedido.items", "item")
+        .innerJoinAndSelect("pedido.itens", "item")
         .innerJoinAndSelect("pedido.cliente", "cliente")
         .getMany()
   }
@@ -62,7 +62,7 @@ export class PedidosService {
   }
 
   findOneItem(id: number) {
-    return this.items.findOneBy({ id });
+    return this.itens.findOneBy({ id });
   }
 
   async removeItem(pedidoId: number, id: number) {
@@ -70,7 +70,7 @@ export class PedidosService {
 
     aggregate.removeItem(id)
 
-    this.items.delete({ id })
+    this.itens.delete({ id })
   }
 
   async confirmaPagamento(pedidoId: number, pagamentos: PagamentoGateway) {

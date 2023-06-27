@@ -9,7 +9,7 @@ export class PedidoAggregate extends IdentifiableObject {
   constructor(
     private status: Status,
     private statusPagamento: StatusPagamento,
-    private items: ItemVO[],
+    private itens: ItemVO[],
     private cliente?: Cliente,
   ) {
     super()
@@ -42,13 +42,13 @@ export class PedidoAggregate extends IdentifiableObject {
   adicionarItem(item: ItemVO) {
     if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido;
 
-    this.items.push(item);
+    this.itens.push(item);
   }
 
   atualizaItem(itemId: number, quantidade: number, observacao: string) {
     if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido;
 
-    this.items = this.items.map(item => {
+    this.itens = this.itens.map(item => {
       if (item.id != itemId) return item;
 
       return new ItemVO(
@@ -64,13 +64,13 @@ export class PedidoAggregate extends IdentifiableObject {
   removeItem(itemId: number) {
     if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido;
 
-    this.items = this.items.filter((item) => item.id != itemId)
+    this.itens = this.itens.filter((item) => item.id != itemId)
   }
 
   confirmaPagamento(pagamentos: PagamentoGateway) {
-    if (this.statusPagamento !== StatusPagamento.PENDENTE) throw new NaoPodeAlterarPedido;
+    if (this.statusPagamento === StatusPagamento.SUCESSO) throw new NaoPodeAlterarPedido;
     if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido;
-    if (this.items.length === 0) throw new PedidoSemItens;
+    if (this.itens.length === 0) throw new PedidoSemItens;
 
     return pagamentos
         .checkout(this)
@@ -88,7 +88,7 @@ export class PedidoAggregate extends IdentifiableObject {
 
     pedido.id = this.id
     pedido.cliente = this.cliente
-    pedido.items = this.items.map(item => item.toEntity());
+    pedido.itens = this.itens.map(item => item.toEntity());
     pedido.status = this.status
     pedido.statusPagamento = this.statusPagamento
 

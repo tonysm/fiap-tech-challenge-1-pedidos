@@ -6,6 +6,5 @@ import { PagamentoGateway } from "../../../../core/pagamentos/pagamento.gateway"
 export class PagamentoFakeGateway implements PagamentoGateway {
   async checkout(pedido: PedidoAggregate) {
    // Pagamento Fake...
-   throw new Error('Falha no pagamento')
   }
 }
