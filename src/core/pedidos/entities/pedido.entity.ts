@@ -29,7 +29,7 @@ export class Pedido {
 
   @ApiProperty({description: 'Itens do pedido', type: Item })
   @OneToMany(() => Item, (item) => item.pedido, { eager: true, cascade: true })
-  items: Item[];
+  itens: Item[];
 
   @Column({ type: 'enum', enum: Status })
   @ApiProperty({ example: Status.EM_PREPARACAO, description: 'O status atual do produto', enum: Status })

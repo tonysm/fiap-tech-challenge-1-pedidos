@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus } from "@nestjs/common";
+import { Pedido } from "../entities/pedido.entity";
 
 export class PedidoException extends HttpException {}
 
@@ -34,6 +35,22 @@ export class PedidoNaoEncontrado extends PedidoException {
 
 export class NaoPodeAlterarPedido extends PedidoException {
     constructor() {
-        super('Pedido não pode ser alterdo', HttpStatus.BAD_REQUEST)
+        super('Pedido não pode ser alterado', HttpStatus.BAD_REQUEST)
+    }
+}
+
+export class PedidoSemItens extends PedidoException {
+    constructor() {
+        super('Pedido sem itens.', HttpStatus.UNPROCESSABLE_ENTITY)
+    }
+}
+
+export class PagamentoFalhou extends PedidoException {
+    constructor(pedido: Pedido) {
+        super({
+          status: HttpStatus.BAD_REQUEST,
+          message: 'Falha no pagamento',
+          pedido,
+        }, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }

@@ -2,13 +2,14 @@ import { Cliente } from "src/core/clientes/entities/cliente.entity";
 import { ItemVO } from "../vo/item.vo";
 import { Pedido, Status, StatusPagamento } from "../entities/pedido.entity";
 import { IdentifiableObject } from "src/core/bases/identifiable.object";
-import { NaoPodeAlterarPedido, StatusInvalidoParaFinalizado, StatusInvalidoParaIniciarPreparacao, StatusInvalidoParaPronto } from "../exceptions/pedido.exception";
+import { NaoPodeAlterarPedido, PedidoSemItens, StatusInvalidoParaFinalizado, StatusInvalidoParaIniciarPreparacao, StatusInvalidoParaPronto } from "../exceptions/pedido.exception";
+import { PagamentoGateway } from "src/core/pagamentos/pagamento.gateway";
 
 export class PedidoAggregate extends IdentifiableObject {
   constructor(
     private status: Status,
     private statusPagamento: StatusPagamento,
-    private items: ItemVO[],
+    private itens: ItemVO[],
     private cliente?: Cliente,
   ) {
     super()
@@ -41,13 +42,13 @@ export class PedidoAggregate extends IdentifiableObject {
   adicionarItem(item: ItemVO) {
     if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido;
 
-    this.items.push(item);
+    this.itens.push(item);
   }
 
   atualizaItem(itemId: number, quantidade: number, observacao: string) {
     if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido;
 
-    this.items = this.items.map(item => {
+    this.itens = this.itens.map(item => {
       if (item.id != itemId) return item;
 
       return new ItemVO(
@@ -63,15 +64,23 @@ export class PedidoAggregate extends IdentifiableObject {
   removeItem(itemId: number) {
     if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido;
 
-    this.items = this.items.filter((item) => item.id != itemId)
+    this.itens = this.itens.filter((item) => item.id != itemId)
   }
 
-  confirmaPagamento() {
-    if (this.statusPagamento !== StatusPagamento.PENDENTE) throw new NaoPodeAlterarPedido;
+  confirmaPagamento(pagamentos: PagamentoGateway) {
+    if (this.statusPagamento === StatusPagamento.SUCESSO) throw new NaoPodeAlterarPedido;
     if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido;
+    if (this.itens.length === 0) throw new PedidoSemItens;
 
-    this.statusPagamento = StatusPagamento.SUCESSO;
-    this.status = Status.RECEBIDO;
+    return pagamentos
+        .checkout(this)
+        .then(() => {
+            this.statusPagamento = StatusPagamento.SUCESSO;
+            this.status = Status.RECEBIDO;
+        })
+        .catch(() => {
+            this.statusPagamento = StatusPagamento.FALHOU;
+        })
   }
 
   toEntity(): Pedido {
@@ -79,7 +88,7 @@ export class PedidoAggregate extends IdentifiableObject {
 
     pedido.id = this.id
     pedido.cliente = this.cliente
-    pedido.items = this.items.map(item => item.toEntity());
+    pedido.itens = this.itens.map(item => item.toEntity());
     pedido.status = this.status
     pedido.statusPagamento = this.statusPagamento
 

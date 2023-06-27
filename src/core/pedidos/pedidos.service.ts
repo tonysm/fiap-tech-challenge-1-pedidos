@@ -4,12 +4,11 @@ import { Pedido, Status, StatusPagamento } from './entities/pedido.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PedidoAggregateFactory } from './aggregates/pedido.aggregate.factory';
-import { PedidoNaoEncontrado, StatusInvalidoException } from './exceptions/pedido.exception';
+import { PagamentoFalhou, PedidoNaoEncontrado, StatusInvalidoException } from './exceptions/pedido.exception';
 import { ItemVO } from './vo/item.vo';
 import { Item } from './entities/item.entity';
 import { UpdatePedidoItemDto } from 'src/adapter/driver/controllers/dto/update-pedido-item.dto';
-import { PaymentGateway } from '../payments/payment.gateway';
-import { Cliente } from '../clientes/entities/cliente.entity';
+import { PagamentoGateway } from '../pagamentos/pagamento.gateway';
 
 @Injectable()
 export class PedidosService {
@@ -17,7 +16,7 @@ export class PedidosService {
     @InjectRepository(Pedido)
     private repository: Repository<Pedido>,
     @InjectRepository(Item)
-    private items: Repository<Item>,
+    private itens: Repository<Item>,
     private readonly pedidoAggregateFactory: PedidoAggregateFactory
   ) {}
 
@@ -28,7 +27,7 @@ export class PedidosService {
   findAllParaCozinha() {
     return this.repository.createQueryBuilder('pedido')
         .where('pedido.status NOT IN (:status)', { status: [Status.CRIANDO, Status.FINALIZADO] })
-        .innerJoinAndSelect("pedido.items", "item")
+        .innerJoinAndSelect("pedido.itens", "item")
         .innerJoinAndSelect("pedido.cliente", "cliente")
         .getMany()
   }
@@ -63,7 +62,7 @@ export class PedidosService {
   }
 
   findOneItem(id: number) {
-    return this.items.findOneBy({ id });
+    return this.itens.findOneBy({ id });
   }
 
   async removeItem(pedidoId: number, id: number) {
@@ -71,17 +70,21 @@ export class PedidosService {
 
     aggregate.removeItem(id)
 
-    this.items.delete({ id })
+    this.itens.delete({ id })
   }
 
-  async confirmaPagamento(pedidoId: number, payments: PaymentGateway) {
+  async confirmaPagamento(pedidoId: number, pagamentos: PagamentoGateway) {
     const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId)
 
-    payments.checkout(aggregate);
+    await aggregate.confirmaPagamento(pagamentos);
 
-    aggregate.confirmaPagamento();
+    const pedido = await this.repository.save(aggregate.toEntity())
 
-    return this.repository.save(aggregate.toEntity())
+    if (pedido.statusPagamento === StatusPagamento.FALHOU) {
+        throw new PagamentoFalhou(pedido);
+    }
+
+    return pedido;
   }
 
   async atualizaStatusDoPedido(id: number, status: Status) {
