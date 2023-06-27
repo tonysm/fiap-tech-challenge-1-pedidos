@@ -2,7 +2,8 @@ import { Cliente } from "src/core/clientes/entities/cliente.entity";
 import { ItemVO } from "../vo/item.vo";
 import { Pedido, Status, StatusPagamento } from "../entities/pedido.entity";
 import { IdentifiableObject } from "src/core/bases/identifiable.object";
-import { NaoPodeAlterarPedido, StatusInvalidoParaFinalizado, StatusInvalidoParaIniciarPreparacao, StatusInvalidoParaPronto } from "../exceptions/pedido.exception";
+import { NaoPodeAlterarPedido, PedidoSemItens, StatusInvalidoParaFinalizado, StatusInvalidoParaIniciarPreparacao, StatusInvalidoParaPronto } from "../exceptions/pedido.exception";
+import { PagamentoGateway } from "src/core/pagamentos/pagamento.gateway";
 
 export class PedidoAggregate extends IdentifiableObject {
   constructor(
@@ -66,12 +67,20 @@ export class PedidoAggregate extends IdentifiableObject {
     this.items = this.items.filter((item) => item.id != itemId)
   }
 
-  confirmaPagamento() {
+  confirmaPagamento(pagamentos: PagamentoGateway) {
     if (this.statusPagamento !== StatusPagamento.PENDENTE) throw new NaoPodeAlterarPedido;
     if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido;
+    if (this.items.length === 0) throw new PedidoSemItens;
 
-    this.statusPagamento = StatusPagamento.SUCESSO;
-    this.status = Status.RECEBIDO;
+    return pagamentos
+        .checkout(this)
+        .then(() => {
+            this.statusPagamento = StatusPagamento.SUCESSO;
+            this.status = Status.RECEBIDO;
+        })
+        .catch(() => {
+            this.statusPagamento = StatusPagamento.FALHOU;
+        })
   }
 
   toEntity(): Pedido {
