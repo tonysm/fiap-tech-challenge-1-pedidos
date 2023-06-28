@@ -6,7 +6,6 @@ import { Repository } from "typeorm";
 
 @Injectable()
 export class ProdutosRepository implements ProdutosRepositoryInterface {
-
     constructor(
         @InjectRepository(Produto)
         private repository: Repository<Produto>
