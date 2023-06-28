@@ -12,7 +12,7 @@ import { UpdatePedidoItemDto } from './dto/update-pedido-item.dto';
 @ApiTags('pedidos')
 export class PedidoItensController {
   constructor(
-    private readonly service: PedidosService,
+    private readonly pedidos: PedidosService,
     private readonly produtos: ProdutosService,
   ) {}
 
@@ -20,7 +20,7 @@ export class PedidoItensController {
   async create(@Param('pedido') pedido: number, @Body() input: CreatePedidoItemDto) {
     const produto = await this.findProdutoOrFail(input.produtoId);
 
-    return this.service.addItem(pedido, new ItemVO(
+    return this.pedidos.addItem(pedido, new ItemVO(
       input.quantidade,
       produto,
       input.observacao,
@@ -30,12 +30,12 @@ export class PedidoItensController {
 
   @Patch(':id')
   async update(@Param('pedido') pedidoId: number, @Param('id') itemId: number, @Body() input: UpdatePedidoItemDto) {
-    return this.service.updateItem(pedidoId, itemId, input);
+    return this.pedidos.updateItem(pedidoId, itemId, input);
   }
 
   @Delete(':id')
   remove(@Param('pedido') pedidoId: number, @Param('id') itemId: number) {
-    return this.service.removeItem(pedidoId, itemId);
+    return this.pedidos.removeItem(pedidoId, itemId);
   }
 
   private async findProdutoOrFail(id: number) {

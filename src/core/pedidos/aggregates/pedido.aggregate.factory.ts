@@ -3,25 +3,19 @@ import { ItemVO } from "../vo/item.vo";
 import { CreatePedidoDto } from "src/adapter/driver/controllers/dto/create-pedido.dto";
 import { PedidoAggregate } from "./pedido.aggregate";
 import { Inject, Injectable } from "@nestjs/common";
-import { ProdutosRepository } from "src/adapter/driven/infrastructure/repositories/produtos.repository";
 import { ClientesRepository } from "src/adapter/driven/infrastructure/repositories/clientes.repository";
-import { ProdutosRepositoryInterface } from "src/core/produtos/repositories/produtos.repository";
 import { ClientesRepositoryInterface } from "src/core/clientes/repositories/clientes.repository";
-import { Repository } from "typeorm";
-import { Pedido, Status, StatusPagamento } from "../entities/pedido.entity";
-import { InjectRepository } from "@nestjs/typeorm";
-import { PedidoNaoEncontrado } from "../exceptions/pedido.exception";
+import { Status, StatusPagamento } from "../entities/pedido.entity";
+import { PedidosRepositoryInterface } from "../repositories/pedidos.repository";
+import { PedidosRepository } from "src/adapter/driven/infrastructure/repositories/pedidos.repository";
 
 @Injectable()
 export class PedidoAggregateFactory {
-
   constructor(
-    @Inject(ProdutosRepository)
-    private produtosRepository: ProdutosRepositoryInterface,
     @Inject(ClientesRepository)
     private clientesRepository: ClientesRepositoryInterface,
-    @InjectRepository(Pedido)
-    private pedidoRepository: Repository<Pedido>
+    @Inject(PedidosRepository)
+    private pedidosRepository: PedidosRepositoryInterface
   ) { }
 
   async createNew(input: CreatePedidoDto): Promise<PedidoAggregate> {
@@ -40,9 +34,7 @@ export class PedidoAggregateFactory {
   }
 
   async createFromId(pedidoId: number): Promise<PedidoAggregate> {
-    const pedido = await this.pedidoRepository.findOneBy({ id: pedidoId })
-
-    if (! pedido) throw new PedidoNaoEncontrado
+    const pedido = await this.pedidosRepository.findOneOrFail(pedidoId)
 
     const itensVO = pedido.itens.map(element => {
       const itemVO = new ItemVO(

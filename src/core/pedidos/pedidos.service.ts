@@ -1,47 +1,37 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreatePedidoDto } from 'src/adapter/driver/controllers/dto/create-pedido.dto';
-import { Pedido, Status, StatusPagamento } from './entities/pedido.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Status, StatusPagamento } from './entities/pedido.entity';
 import { PedidoAggregateFactory } from './aggregates/pedido.aggregate.factory';
-import { PagamentoFalhou, PedidoNaoEncontrado, StatusInvalidoException } from './exceptions/pedido.exception';
+import { PagamentoFalhou, StatusInvalidoException } from './exceptions/pedido.exception';
 import { ItemVO } from './vo/item.vo';
-import { Item } from './entities/item.entity';
 import { UpdatePedidoItemDto } from 'src/adapter/driver/controllers/dto/update-pedido-item.dto';
 import { PagamentoGateway } from '../pagamentos/pagamento.gateway';
+import { PedidosRepositoryInterface } from './repositories/pedidos.repository';
+import { PedidosRepository } from 'src/adapter/driven/infrastructure/repositories/pedidos.repository';
 
 @Injectable()
 export class PedidosService {
   constructor(
-    @InjectRepository(Pedido)
-    private repository: Repository<Pedido>,
-    @InjectRepository(Item)
-    private itens: Repository<Item>,
+    @Inject(PedidosRepository)
+    private readonly repository: PedidosRepositoryInterface,
     private readonly pedidoAggregateFactory: PedidoAggregateFactory
   ) {}
 
   findAll() {
-    return this.repository.find({ loadEagerRelations: true })
+    return this.repository.findAll();
   }
 
   findAllParaCozinha() {
-    return this.repository.createQueryBuilder('pedido')
-        .where('pedido.status NOT IN (:status)', { status: [Status.CRIANDO, Status.FINALIZADO] })
-        .innerJoinAndSelect("pedido.itens", "item")
-        .innerJoinAndSelect("pedido.cliente", "cliente")
-        .getMany()
+    return this.repository.findAllParaCozinha();
   }
 
-  async findOne(id: number) {
-    const pedido = await this.repository.findOneBy({ id });
-
-    if (! pedido) throw new PedidoNaoEncontrado;
-
-    return pedido;
+  findOne(id: number) {
+    return this.repository.findOneOrFail(id);
   }
 
   async create(input: CreatePedidoDto) {
     const pedidoAggregate = await this.pedidoAggregateFactory.createNew(input)
+
     return this.repository.save(pedidoAggregate.toEntity());
   }
 
@@ -62,7 +52,7 @@ export class PedidosService {
   }
 
   findOneItem(id: number) {
-    return this.itens.findOneBy({ id });
+    return this.repository.findOneItem(id);
   }
 
   async removeItem(pedidoId: number, id: number) {
@@ -70,7 +60,7 @@ export class PedidosService {
 
     aggregate.removeItem(id)
 
-    this.itens.delete({ id })
+    this.repository.deleteItem(id);
   }
 
   async confirmaPagamento(pedidoId: number, pagamentos: PagamentoGateway) {

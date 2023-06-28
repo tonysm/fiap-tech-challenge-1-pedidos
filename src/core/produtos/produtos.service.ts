@@ -10,8 +10,9 @@ import { ProdutoNaoEncontrado } from './exceptions/produto.exception';
 export class ProdutosService {
   constructor(
     @Inject(ProdutosRepository)
-    private repository: ProdutosRepositoryInterface
+    private readonly repository: ProdutosRepositoryInterface
   ) {}
+
   create(input: CreateProdutoDto) {
     return this.repository.save(Produto.createFrom({
       nome: input.nome,

@@ -13,14 +13,19 @@ import { PagamentoGateway } from '../pagamentos/pagamento.gateway';
 import { PagamentoFakeGateway } from '../../adapter/driven/infrastructure/pagamentos/pagmento-fake.gateway';
 import { PedidosConfirmadosController } from 'src/adapter/driver/controllers/pedidos_confirmados.controller';
 import { FilaCozinhaController } from 'src/adapter/driver/controllers/fila_cozinha_controller';
+import { PedidosRepositoryInterface } from './repositories/pedidos.repository';
+import { PedidosRepository } from 'src/adapter/driven/infrastructure/repositories/pedidos.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Pedido, Item]), ProdutosModule, ClientesModule],
   controllers: [PedidosController, PedidoItensController, PedidosConfirmadosController, FilaCozinhaController],
-  providers: [PedidoAggregateFactory, PedidosService, ProdutosService, {
-    provide: PagamentoGateway,
-    useClass: PagamentoFakeGateway,
-  }],
-  exports: [PagamentoGateway],
+  providers: [
+    PedidoAggregateFactory,
+    PedidosService,
+    ProdutosService,
+    PedidosRepository,
+    PagamentoFakeGateway,
+  ],
+  exports: [PagamentoFakeGateway, PedidosRepository],
 })
 export class PedidosModule {}
