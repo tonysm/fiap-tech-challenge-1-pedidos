@@ -9,6 +9,7 @@ export interface ClientesRepositoryInterface {
 
    findByCpf(cpf: String): Promise<Cliente>;
    findByCpfOrFail(cpf: string): Promise<Cliente>;
+   findByEmailOrFail(email: string): Promise<Cliente>;
 
    delete(id: number): void;
 }

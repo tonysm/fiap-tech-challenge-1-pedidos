@@ -35,6 +35,12 @@ export class ClientesRepository implements ClientesRepositoryInterface {
             .getOneOrFail()
     }
 
+    findByEmailOrFail(email: string) {
+        return this.repository.createQueryBuilder('cliente')
+            .where('cliente.email = :email', { email })
+            .getOneOrFail()
+    }
+
     delete(id: number) {
         this.repository.delete({ id });
     }
