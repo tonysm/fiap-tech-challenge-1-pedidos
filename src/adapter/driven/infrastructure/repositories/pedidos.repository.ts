@@ -23,7 +23,7 @@ export class PedidosRepository implements PedidosRepositoryInterface {
         return this.pedidos.createQueryBuilder('pedido')
             .where('pedido.status NOT IN (:status)', { status: [Status.CRIANDO, Status.FINALIZADO] })
             .innerJoinAndSelect("pedido.itens", "item")
-            .innerJoinAndSelect("pedido.cliente", "cliente")
+            .leftJoinAndSelect("pedido.cliente", "cliente")
             .getMany()
     }
 

@@ -1,20 +1,26 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, Query } from '@nestjs/common';
-import { ProdutosService } from 'src/core/produtos/produtos.service';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, Query, Inject } from '@nestjs/common';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
 import { Categoria } from 'src/core/produtos/entities/produto.entity';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ProdutosServiceInterface } from 'src/core/produtos/produtos.service.interface';
 
 @Controller('produtos')
 @ApiTags('produtos')
 export class ProdutosController {
-  constructor(private readonly produtosService: ProdutosService) {}
+  
+  constructor(
+    @Inject(ProdutosServiceInterface)
+    private readonly produtosService: ProdutosServiceInterface
+  ) {}
 
+  @ApiOperation({ summary: 'Cria um novo produto' })
   @Post()
   create(@Body() createProdutoDto: CreateProdutoDto) {
     return this.produtosService.create(createProdutoDto);
   }
 
+  @ApiOperation({ summary: 'Busca produtos por categoria' })
   @Get()
   @ApiQuery({ name: 'categoria', required: false, type: 'enum', enum: Categoria })
   findAll(@Query('categoria') categoria: Categoria) {
@@ -25,6 +31,7 @@ export class ProdutosController {
     return this.produtosService.findAll();
   }
 
+  @ApiOperation({ summary: 'Busca produto por id' })
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const produto = await this.produtosService.findOne(+id);
@@ -34,11 +41,13 @@ export class ProdutosController {
     return produto
   }
 
+  @ApiOperation({ summary: 'Atualiza os dados de um produto' })
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProdutoDto: UpdateProdutoDto) {
     return this.produtosService.update(+id, updateProdutoDto);
   }
 
+  @ApiOperation({ summary: 'Exclui um produto' })
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.produtosService.remove(+id);
