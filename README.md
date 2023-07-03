@@ -9,7 +9,7 @@ As principais tecnologias utilizadas na consutração da aplicação foram:
 
 - Linguagem TypeScript
 - Framework NestJS
-- Banco de dados MySql
+- Banco de dados MySQL
 - Swagger para documentação das APIs
 
 ## Documentação de domínio
@@ -20,21 +20,21 @@ Link de acesso ao Miro: https://miro.com/app/board/uXjVMCbokg0=/?share_link_id=1
 
 ## Inicialização da aplicação
 
-Para iniciar a aplicação foi disponibilizado um aquivo **docker-compose.yml** com as configurações necessárias para execução, incluindo o build da aplição em uma imagem Docker e um container para o banco de dados MySql.
+Para iniciar a aplicação foi disponibilizado um aquivo **docker-compose.yml** com as configurações necessárias para execução, incluindo o build da aplição em uma imagem Docker e um container para o banco de dados MySQL.
 
 Comando de inicialização:
 ```docker compose up```
 
 ## Documentação das APIs
 
-Para documentação das APIs utilizamos o framework Swagger. Após a inicialização da aplicação o mesmo fica disponível em http://localhost:3000/api, onde é possível realizar requisições para os endpoints através do mesmo.
+Para documentação das APIs utilizamos o framework Swagger. Após a inicialização da aplicação o mesmo fica disponível em [http://localhost:3000/api](http://localhost:3000/api), onde é possível realizar requisições para os endpoints através do mesmo.
 
-Na própria página do swager é disponibilizado exemplos de requests.
+Na própria página do Swagger é disponibilizado exemplos de requests.
 
 ## Recursos REST disponibilizados
 
-- CRUD de cliente
-- CRUD de produto
+- CRUD de clientes
+- CRUD de produtos
 - Criação e gerenciamento de pedidos
 
 ### Fluxo de recursos rest para criação de pedido
