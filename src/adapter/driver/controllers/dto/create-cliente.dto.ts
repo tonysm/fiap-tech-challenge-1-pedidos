@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsString } from "class-validator";
+import { CpfJaExiste } from "src/core/clientes/rules/cpf-unique.rule";
 
 export class CreateClienteDto {
     @IsString()
@@ -7,6 +8,7 @@ export class CreateClienteDto {
     readonly nome: String;
 
     @IsString()
+    @CpfJaExiste()
     @ApiProperty({ example: '999.999.999-99', description: 'O CPF do cliente'})
     readonly cpf: String;
 

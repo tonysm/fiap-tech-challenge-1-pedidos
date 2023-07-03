@@ -25,8 +25,14 @@ export class ClientesRepository implements ClientesRepositoryInterface {
 
     findByCpf(cpf: String) {
         return this.repository.createQueryBuilder('cliente')
-        .where('cliente.cpf = :cpf', { cpf })
-        .getOne()
+            .where('cliente.cpf = :cpf', { cpf })
+            .getOne()
+    }
+
+    findByCpfOrFail(cpf: string) {
+        return this.repository.createQueryBuilder('cliente')
+            .where('cliente.cpf = :cpf', { cpf })
+            .getOneOrFail()
     }
 
     delete(id: number) {
