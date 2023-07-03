@@ -14,12 +14,8 @@ export class ClientesController {
 
   @ApiOperation({ summary: 'Cria um novo cliente' })
   @Post()
-  async create(@Body() createClienteDto: CreateClienteDto) {
-    try {
-        return await this.clientesService.create(createClienteDto);
-    } catch (err) {
-        throw new HttpException("Não foi possivel criar o cliente", HttpStatus.UNPROCESSABLE_ENTITY, { cause: err });
-    }
+  create(@Body() createClienteDto: CreateClienteDto) {
+    return this.clientesService.create(createClienteDto);
   }
 
   @ApiOperation({ summary: 'Lista os clientes' })

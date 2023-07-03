@@ -3,7 +3,7 @@ import { CreateClienteDto } from '../../adapter/driver/controllers/dto/create-cl
 import { UpdateClienteDto } from 'src/adapter/driver/controllers/dto/update-cliente.dto';
 import { ClientesRepositoryInterface } from './repositories/clientes.repository';
 import { Cliente } from './entities/cliente.entity';
-import { ClienteNaoEncontrado } from './exceptions/cliente.exception';
+import { ClienteNaoEncontrado, DuplicidadeDeCpf, DuplicidadeDeEmail } from './exceptions/cliente.exception';
 import { ClientesRepository } from 'src/adapter/driven/infrastructure/repositories/clientes.repository';
 import { ClientesServiceInterface } from './clientes.service.interface';
 
@@ -14,11 +14,13 @@ export class ClientesService implements ClientesServiceInterface {
     private repository: ClientesRepositoryInterface
   ) {}
 
-  create(input: CreateClienteDto) {
-    return this.repository.save(Cliente.createFrom({
-        nome: input.nome,
-        cpf: input.cpf,
-        email: input.email,
+  async create(input: CreateClienteDto) {
+    await this.guardAgainstClientDuplication(input.cpf, input.email);
+
+    return await this.repository.save(Cliente.createFrom({
+      nome: input.nome,
+      cpf: input.cpf,
+      email: input.email,
     }));
   }
 
@@ -35,10 +37,12 @@ export class ClientesService implements ClientesServiceInterface {
   }
 
   async update(id: number, { nome, cpf, email }: UpdateClienteDto) {
+    await this.guardAgainstClientDuplication(cpf, email, [id]);
+
     const cliente = await this.repository.findById(id)
 
     if (! cliente) {
-        throw new ClienteNaoEncontrado
+      throw new ClienteNaoEncontrado
     }
 
     return this.repository.save(cliente.fill({ nome, cpf, email }))
@@ -46,5 +50,15 @@ export class ClientesService implements ClientesServiceInterface {
 
   remove(id: number) {
     this.repository.delete(id)
+  }
+
+  private async guardAgainstClientDuplication(cpf: string, email: string, except?: number[]) {
+    if (await this.repository.findByCpf(cpf, except)) {
+      throw new DuplicidadeDeCpf;
+    }
+
+    if (await this.repository.findByEmail(email, except)) {
+      throw new DuplicidadeDeEmail;
+    }
   }
 }
