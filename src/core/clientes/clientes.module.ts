@@ -5,12 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Cliente } from './entities/cliente.entity';
 import { ClientesRepositoryInterface } from './repositories/clientes.repository';
 import { ClientesRepository } from 'src/adapter/driven/infrastructure/repositories/clientes.repository';
+import { CpfJaExisteRule } from './rules/cpf-unique.rule';
+import { EmailJaExisteRule } from './rules/email-unique.rule';
 import { ClientesServiceInterface } from './clientes.service.interface';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Cliente])],
   controllers: [ClientesController],
-  providers: [ClientesRepository, ClientesService, {
+  providers: [ClientesRepository, ClientesService, CpfJaExisteRule, EmailJaExisteRule, {
     provide: ClientesRepositoryInterface,
     useClass: ClientesRepository,
   }, {
