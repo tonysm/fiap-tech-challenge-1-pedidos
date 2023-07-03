@@ -14,7 +14,7 @@ export class CreateClienteDto {
     @IsString()
     @CpfJaExiste()
     @CpfValido()
-    @ApiProperty({ example: '999.999.999-99', description: 'O CPF do cliente'})
+    @ApiProperty({ example: '518.207.466-23', description: 'O CPF do cliente'})
     @Transform(({ value }) => cpf.format(value))
     readonly cpf: String;
 
