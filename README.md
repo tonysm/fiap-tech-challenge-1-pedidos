@@ -41,7 +41,7 @@ Na própria página do Swagger é disponibilizado exemplos de requests.
 
 1. Inicialização do pedido sendo opcional informar o id de um cliente pré cadastrado
 
-```curl
+```bash
 curl -X 'POST' \
   'http://localhost:3000/pedidos' \
   -H 'accept: application/json' \
@@ -53,7 +53,7 @@ curl -X 'POST' \
 
 2. Adição de itens no pedido
 
-```curl
+```bash
 curl -X 'POST' \
   'http://localhost:3000/pedidos/2/itens' \
   -H 'accept: */*' \
@@ -67,7 +67,7 @@ curl -X 'POST' \
 
 3. Atualização de itens já inseridos no pedido caso necessário
 
-```curl
+```bash
 curl -X 'PATCH' \
   'http://localhost:3000/pedidos/2/itens/1' \
   -H 'accept: */*' \
@@ -80,7 +80,7 @@ curl -X 'PATCH' \
 
 4. Remoção de itens já inseridos no pedido caso necessário
 
-```curl
+```bash
 curl -X 'DELETE' \
   'http://localhost:3000/pedidos/2/itens/1' \
   -H 'accept: */*'
@@ -88,7 +88,7 @@ curl -X 'DELETE' \
 
 5. Confirmação de pagamento do pedido
 
-```curl
+```bash
 curl -X 'POST' \
   'http://localhost:3000/pedidos/2/confirm' \
   -H 'accept: */*' \
@@ -98,7 +98,7 @@ curl -X 'POST' \
 
 6. Inicio da prepração do pedido
 
-```curl
+```bash
 curl -X 'PUT' \
   'http://localhost:3000/cozinha/pedidos/2/status' \
   -H 'accept: */*' \
@@ -110,7 +110,7 @@ curl -X 'PUT' \
 
 6. Conclusão da preparação do pedido
 
-```curl
+```bash
 curl -X 'PUT' \
   'http://localhost:3000/cozinha/pedidos/2/status' \
   -H 'accept: */*' \
@@ -122,7 +122,7 @@ curl -X 'PUT' \
 
 7. Finalização do pedido
 
-```curl
+```bash
 curl -X 'PUT' \
   'http://localhost:3000/cozinha/pedidos/2/status' \
   -H 'accept: */*' \
