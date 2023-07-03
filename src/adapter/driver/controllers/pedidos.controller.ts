@@ -1,14 +1,15 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Pedido } from '../../../core/pedidos/entities/pedido.entity';
-import { PedidosService } from '../../../core/pedidos/pedidos.service';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
+import { PedidosServiceInterface } from 'src/core/pedidos/pedido.service.interface';
 
 @Controller('pedidos')
 @ApiTags('pedidos')
 export class PedidosController {
     constructor(
-      private readonly pedidosService: PedidosService,
+      @Inject(PedidosServiceInterface)
+      private readonly pedidosService: PedidosServiceInterface,
     ) {}
 
     @Get()
@@ -23,13 +24,14 @@ export class PedidosController {
     }
 
     @Post()
-    @ApiOperation({ summary: 'Cria pedido' })
+    @ApiOperation({ summary: 'Inicia pedido' })
     @ApiResponse({ status: 403, description: 'Forbidden.' })
     @ApiResponse({ status: 200, type: Pedido })
     async create(@Body() input: CreatePedidoDto) {
       return this.pedidosService.create(input);
     }
 
+    @ApiOperation({ summary: 'Busca pedido por id' })
     @Get(':id')
     show(@Param('id') id: number) {
       return this.pedidosService.findOne(id);

@@ -5,9 +5,10 @@ import { Categoria, Produto } from './entities/produto.entity';
 import { ProdutosRepositoryInterface } from './repositories/produtos.repository';
 import { ProdutosRepository } from 'src/adapter/driven/infrastructure/repositories/produtos.repository';
 import { ProdutoNaoEncontrado } from './exceptions/produto.exception';
+import { ProdutosServiceInterface } from './produtos.service.interface';
 
 @Injectable()
-export class ProdutosService {
+export class ProdutosService implements ProdutosServiceInterface {
   constructor(
     @Inject(ProdutosRepository)
     private readonly repository: ProdutosRepositoryInterface

@@ -5,9 +5,10 @@ import { ClientesRepositoryInterface } from './repositories/clientes.repository'
 import { Cliente } from './entities/cliente.entity';
 import { ClienteNaoEncontrado } from './exceptions/cliente.exception';
 import { ClientesRepository } from 'src/adapter/driven/infrastructure/repositories/clientes.repository';
+import { ClientesServiceInterface } from './clientes.service.interface';
 
 @Injectable()
-export class ClientesService {
+export class ClientesService implements ClientesServiceInterface {
   constructor(
     @Inject(ClientesRepository)
     private repository: ClientesRepositoryInterface
