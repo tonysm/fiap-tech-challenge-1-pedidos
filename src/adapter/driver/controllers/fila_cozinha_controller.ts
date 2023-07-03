@@ -10,6 +10,7 @@ export class FilaCozinhaController {
     private pedidos: PedidosService,
   ) {}
 
+  @ApiOperation({ summary: 'Lista os pedidos para acompanhamento via painel' })
   @Get()
   index() {
     return this.pedidos.findAllParaCozinha()

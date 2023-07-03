@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Cliente } from './entities/cliente.entity';
 import { ClientesRepositoryInterface } from './repositories/clientes.repository';
 import { ClientesRepository } from 'src/adapter/driven/infrastructure/repositories/clientes.repository';
+import { ClientesServiceInterface } from './clientes.service.interface';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Cliente])],
@@ -12,6 +13,9 @@ import { ClientesRepository } from 'src/adapter/driven/infrastructure/repositori
   providers: [ClientesRepository, ClientesService, {
     provide: ClientesRepositoryInterface,
     useClass: ClientesRepository,
+  }, {
+    provide: ClientesServiceInterface,
+    useClass: ClientesService
   }],
   exports: [ClientesRepository]
 })

@@ -2,7 +2,7 @@ import { Controller, Post, Body, Param, Delete, Patch } from '@nestjs/common';
 
 import { CreatePedidoItemDto } from './dto/create-pedido-item.dto';
 import { PedidosService } from 'src/core/pedidos/pedidos.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ProdutosService } from 'src/core/produtos/produtos.service';
 import { ProdutoNaoEncontrado } from 'src/core/produtos/exceptions/produto.exception';
 import { ItemVO } from 'src/core/pedidos/vo/item.vo';
@@ -16,6 +16,7 @@ export class PedidoItensController {
     private readonly produtos: ProdutosService,
   ) {}
 
+  @ApiOperation({ summary: 'Adiciona item ao pedido' })
   @Post()
   async create(@Param('pedido') pedido: number, @Body() input: CreatePedidoItemDto) {
     const produto = await this.findProdutoOrFail(input.produtoId);
@@ -28,11 +29,13 @@ export class PedidoItensController {
     ));
   }
 
+  @ApiOperation({ summary: 'Atualiza item do pedido' })
   @Patch(':id')
   async update(@Param('pedido') pedidoId: number, @Param('id') itemId: number, @Body() input: UpdatePedidoItemDto) {
     return this.pedidos.updateItem(pedidoId, itemId, input);
   }
 
+  @ApiOperation({ summary: 'Remove item do pedido' })
   @Delete(':id')
   remove(@Param('pedido') pedidoId: number, @Param('id') itemId: number) {
     return this.pedidos.removeItem(pedidoId, itemId);

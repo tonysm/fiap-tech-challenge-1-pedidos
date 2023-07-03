@@ -4,11 +4,15 @@ import { ProdutosController } from 'src/adapter/driver/controllers/produtos.cont
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Produto } from './entities/produto.entity';
 import { ProdutosRepository } from 'src/adapter/driven/infrastructure/repositories/produtos.repository';
+import { ProdutosServiceInterface } from './produtos.service.interface';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Produto])],
   controllers: [ProdutosController],
-  providers: [ProdutosRepository, ProdutosService],
+  providers: [ProdutosRepository, ProdutosService, {
+    provide: ProdutosServiceInterface,
+    useClass: ProdutosService
+  }],
   exports: [ProdutosRepository]
 })
 export class ProdutosModule {}

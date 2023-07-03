@@ -8,9 +8,10 @@ import { UpdatePedidoItemDto } from 'src/adapter/driver/controllers/dto/update-p
 import { PagamentoGateway } from '../pagamentos/pagamento.gateway';
 import { PedidosRepositoryInterface } from './repositories/pedidos.repository';
 import { PedidosRepository } from 'src/adapter/driven/infrastructure/repositories/pedidos.repository';
+import { PedidosServiceInterface } from './pedido.service.interface';
 
 @Injectable()
-export class PedidosService {
+export class PedidosService implements PedidosServiceInterface {
   constructor(
     @Inject(PedidosRepository)
     private readonly repository: PedidosRepositoryInterface,
