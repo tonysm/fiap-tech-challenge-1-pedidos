@@ -7,9 +7,8 @@ services:
       target: development
     volumes:
       - .:/usr/src/app
-      - /usr/src/app/node_modules
     # Override the Dockerfile command
-    command: npm run start:dev
+    command: bash -c "npm ci && npm run start:dev"
     ports:
       - 3000:3000
     networks:
