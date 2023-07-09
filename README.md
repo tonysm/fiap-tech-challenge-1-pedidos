@@ -22,10 +22,14 @@ Link de acesso ao Miro: https://miro.com/app/board/uXjVMCbokg0=/?share_link_id=1
 
 Para iniciar a aplicação foi disponibilizado um aquivo **docker-compose.yml** com as configurações necessárias para execução, incluindo o build da aplição em uma imagem Docker e um container para o banco de dados MySQL.
 
-Antes de executar o comando de inicialização renomeie o arquivo **.env.example** para **.env**.
+Para inicializar a aplicação, rode os comandos:
 
-Comando de inicialização:
-```docker compose up```
+```bash
+cp .env.example .env
+docker compose up
+```
+
+Quando o container do MySQL subir com sucesso, a aplicação vai automaticamente aplicar as migrações quando subir. Após isso, você pode acessar a API no navegador [http://localhost:3000/api](http://localhost:3000/api).
 
 ## Documentação das APIs
 
@@ -40,6 +44,23 @@ Na própria página do Swagger é disponibilizado exemplos de requests.
 - Criação e gerenciamento de pedidos
 
 ### Fluxo de recursos rest para criação de pedido
+
+Os passos para testar a API são os seguintes:
+
+1. Criar produtos
+1. Criar cliente (opcional)
+1. Criar pedido (passar o ID do cliente é opcional)
+1. Adicionar item ao pedido (usando os IDs dos produtos e do pedido que foi criado)
+1. Confirmar pedido (o pagamento será automaticamente realizado)
+
+Após esses passos, o pedido irá pra linha de produção da cozinha. O mesmo estará disponivel no endpoint de pedidos das cozinhas. A etapa em que o pedido está poderá ser atualizada usando o endpoint de atualizar etapa. Ao mudar o status pra "recebido", o pedido não retornará mais no endpoint da linha de produção da cozinha. Nessa etapa, o status do pedido pode ser mudado para os seguintes:
+
+- `RECEBIDO`: O pagamento foi confirmado e está pronto para ser produzido
+- `EM_PREPARACAO`: O pedido está sendo preparado
+- `PRONTO`: O pedido está pronto e o cliente pode busca-lo
+- `FINALIZADO`: O pedido foi entregue ao cliente
+
+Você pode testar a API direto da documentação do Swagger, aqui alguns exemplos usando CURL direto do terminal:
 
 1. Inicialização do pedido sendo opcional informar o id de um cliente pré cadastrado
 
