@@ -29,7 +29,12 @@ cp .env.example .env
 docker compose up
 ```
 
-Quando o container do MySQL subir com sucesso, a aplicação vai automaticamente aplicar as migrações quando subir. Após isso, você pode acessar a API no navegador [http://localhost:3000/api](http://localhost:3000/api).
+Quando o container do MySQL subir com sucesso, a aplicação vai automaticamente aplicar as migrações quando subir. Após isso, você pode acessar a API no navegador [http://localhost:3000/api](http://localhost:3000/api). Nessa etapa, o status do pedido pode ser mudado para os seguintes:
+
+- `RECEBIDO`: O pagamento foi confirmado e está pronto para ser produzido
+- `EM_PREPARACAO`: O pedido está sendo preparado
+- `PRONTO`: O pedido está pronto e o cliente pode busca-lo
+- `FINALIZADO`: O pedido foi entregue ao cliente
 
 ## Documentação das APIs
 
