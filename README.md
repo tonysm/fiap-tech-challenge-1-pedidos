@@ -29,12 +29,7 @@ cp .env.example .env
 docker compose up
 ```
 
-Quando o container do MySQL subir com sucesso, a aplicação vai automaticamente aplicar as migrações quando subir. Após isso, você pode acessar a API no navegador [http://localhost:3000/api](http://localhost:3000/api). Nessa etapa, o status do pedido pode ser mudado para os seguintes:
-
-- `RECEBIDO`: O pagamento foi confirmado e está pronto para ser produzido
-- `EM_PREPARACAO`: O pedido está sendo preparado
-- `PRONTO`: O pedido está pronto e o cliente pode busca-lo
-- `FINALIZADO`: O pedido foi entregue ao cliente
+Quando o container do MySQL subir com sucesso, a aplicação vai automaticamente aplicar as migrações quando subir. Após isso, você pode acessar a API no navegador [http://localhost:3000/api](http://localhost:3000/api).
 
 ## Documentação das APIs
 
@@ -58,7 +53,12 @@ Os passos para testar a API são os seguintes:
 1. Adicionar item ao pedido (usando os IDs dos produtos e do pedido que foi criado)
 1. Confirmar pedido (o pagamento será automaticamente realizado)
 
-Após esses passos, o pedido irá pra linha de produção da cozinha. O mesmo estará disponivel no endpoint de pedidos das cozinhas. A etapa em que o pedido está poderá ser atualizada usando o endpoint de atualizar etapa. Ao mudar o status pra "recebido", o pedido não retornará mais no endpoint da linha de produção da cozinha.
+Após esses passos, o pedido irá pra linha de produção da cozinha. O mesmo estará disponivel no endpoint de pedidos das cozinhas. A etapa em que o pedido está poderá ser atualizada usando o endpoint de atualizar etapa. Ao mudar o status pra "recebido", o pedido não retornará mais no endpoint da linha de produção da cozinha. Nessa etapa, o status do pedido pode ser mudado para os seguintes:
+
+- `RECEBIDO`: O pagamento foi confirmado e está pronto para ser produzido
+- `EM_PREPARACAO`: O pedido está sendo preparado
+- `PRONTO`: O pedido está pronto e o cliente pode busca-lo
+- `FINALIZADO`: O pedido foi entregue ao cliente
 
 Você pode testar a API direto da documentação do Swagger, aqui alguns exemplos usando CURL direto do terminal:
 
