@@ -22,6 +22,8 @@ Link de acesso ao Miro: https://miro.com/app/board/uXjVMCbokg0=/?share_link_id=1
 
 Para iniciar a aplicação foi disponibilizado um aquivo **docker-compose.yml** com as configurações necessárias para execução, incluindo o build da aplição em uma imagem Docker e um container para o banco de dados MySQL.
 
+Antes de executar o comando de inicialização renomeie o arquivo **.env.example** para **.env**.
+
 Comando de inicialização:
 ```docker compose up```
 
