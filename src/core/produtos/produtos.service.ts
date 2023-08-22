@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateProdutoDto } from '../../adapter/driver/controllers/dto/create-produto.dto';
-import { UpdateProdutoDto } from 'src/adapter/driver/controllers/dto/update-produto.dto';
+import { CreateProdutoDto } from '../../externals/apis/dto/create-produto.dto';
+import { UpdateProdutoDto } from 'src/externals/apis/dto/update-produto.dto';
 import { Categoria, Produto } from './entities/produto.entity';
 import { ProdutosRepositoryInterface } from './repositories/produtos.repository';
-import { ProdutosRepository } from 'src/adapter/driven/infrastructure/repositories/produtos.repository';
+import { ProdutosRepository } from 'src/externals/repositories/produtos.repository';
 import { ProdutoNaoEncontrado } from './exceptions/produto.exception';
 import { ProdutosServiceInterface } from './produtos.service.interface';
 

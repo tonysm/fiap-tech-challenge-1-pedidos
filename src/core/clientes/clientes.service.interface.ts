@@ -1,5 +1,5 @@
-import { CreateClienteDto } from '../../adapter/driver/controllers/dto/create-cliente.dto';
-import { UpdateClienteDto } from 'src/adapter/driver/controllers/dto/update-cliente.dto';
+import { CreateClienteDto } from '../../externals/apis/dto/create-cliente.dto';
+import { UpdateClienteDto } from 'src/externals/apis/dto/update-cliente.dto';
 
 export interface ClientesServiceInterface {
   create(input: CreateClienteDto)

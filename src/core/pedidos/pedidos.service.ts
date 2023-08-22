@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreatePedidoDto } from 'src/adapter/driver/controllers/dto/create-pedido.dto';
+import { CreatePedidoDto } from 'src/externals/apis/dto/create-pedido.dto';
 import { Status, StatusPagamento } from './entities/pedido.entity';
 import { PedidoAggregateFactory } from './aggregates/pedido.aggregate.factory';
 import { PagamentoFalhou, StatusInvalidoException } from './exceptions/pedido.exception';
 import { ItemVO } from './vo/item.vo';
-import { UpdatePedidoItemDto } from 'src/adapter/driver/controllers/dto/update-pedido-item.dto';
+import { UpdatePedidoItemDto } from 'src/externals/apis/dto/update-pedido-item.dto';
 import { PagamentoGateway } from '../pagamentos/pagamento.gateway';
 import { PedidosRepositoryInterface } from './repositories/pedidos.repository';
-import { PedidosRepository } from 'src/adapter/driven/infrastructure/repositories/pedidos.repository';
+import { PedidosRepository } from 'src/externals/repositories/pedidos.repository';
 import { PedidosServiceInterface } from './pedido.service.interface';
 
 @Injectable()

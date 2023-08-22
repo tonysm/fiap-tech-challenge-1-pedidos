@@ -3,7 +3,7 @@ import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { ConfirmaPedidoDto } from "./dto/confirma-pedido.dto";
 import { PagamentoGateway } from "src/core/pagamentos/pagamento.gateway";
 import { PedidosService } from "src/core/pedidos/pedidos.service";
-import { PagamentoFakeGateway } from "src/adapter/driven/infrastructure/pagamentos/pagmento-fake.gateway";
+import { PagamentoFakeGateway } from "src/externals/gateways/pagmento-fake.gateway";
 
 @Controller('pedidos/:id/confirm')
 @ApiTags('pedidos')

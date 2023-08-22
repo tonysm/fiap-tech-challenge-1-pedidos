@@ -1,13 +1,13 @@
 import { Cliente } from "src/core/clientes/entities/cliente.entity";
 import { ItemVO } from "../vo/item.vo";
-import { CreatePedidoDto } from "src/adapter/driver/controllers/dto/create-pedido.dto";
+import { CreatePedidoDto } from "src/externals/apis/dto/create-pedido.dto";
 import { PedidoAggregate } from "./pedido.aggregate";
 import { Inject, Injectable } from "@nestjs/common";
-import { ClientesRepository } from "src/adapter/driven/infrastructure/repositories/clientes.repository";
+import { ClientesRepository } from "src/externals/repositories/clientes.repository";
 import { ClientesRepositoryInterface } from "src/core/clientes/repositories/clientes.repository";
 import { Status, StatusPagamento } from "../entities/pedido.entity";
 import { PedidosRepositoryInterface } from "../repositories/pedidos.repository";
-import { PedidosRepository } from "src/adapter/driven/infrastructure/repositories/pedidos.repository";
+import { PedidosRepository } from "src/externals/repositories/pedidos.repository";
 
 @Injectable()
 export class PedidoAggregateFactory {

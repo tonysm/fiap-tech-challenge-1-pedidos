@@ -1,6 +1,6 @@
-import { CreateProdutoDto } from "src/adapter/driver/controllers/dto/create-produto.dto"
+import { CreateProdutoDto } from "src/externals/apis/dto/create-produto.dto"
 import { Categoria } from "./entities/produto.entity"
-import { UpdateProdutoDto } from "src/adapter/driver/controllers/dto/update-produto.dto"
+import { UpdateProdutoDto } from "src/externals/apis/dto/update-produto.dto"
 
 export interface ProdutosServiceInterface {
     create(input: CreateProdutoDto)

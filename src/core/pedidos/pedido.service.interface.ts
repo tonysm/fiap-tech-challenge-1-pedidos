@@ -1,6 +1,6 @@
-import { CreatePedidoDto } from "src/adapter/driver/controllers/dto/create-pedido.dto"
+import { CreatePedidoDto } from "src/externals/apis/dto/create-pedido.dto"
 import { ItemVO } from "./vo/item.vo"
-import { UpdatePedidoItemDto } from "src/adapter/driver/controllers/dto/update-pedido-item.dto"
+import { UpdatePedidoItemDto } from "src/externals/apis/dto/update-pedido-item.dto"
 import { PagamentoGateway } from "../pagamentos/pagamento.gateway"
 import { Status } from "./entities/pedido.entity"
 import { Injectable } from "@nestjs/common"

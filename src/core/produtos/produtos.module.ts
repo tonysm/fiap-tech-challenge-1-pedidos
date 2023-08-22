@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ProdutosService } from './produtos.service';
-import { ProdutosController } from 'src/adapter/driver/controllers/produtos.controller';
+import { ProdutosController } from 'src/externals/apis/produtos.api';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Produto } from './entities/produto.entity';
-import { ProdutosRepository } from 'src/adapter/driven/infrastructure/repositories/produtos.repository';
+import { ProdutosRepository } from 'src/externals/repositories/produtos.repository';
 import { ProdutosServiceInterface } from './produtos.service.interface';
 
 @Module({

@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Pedido } from '../../../core/pedidos/entities/pedido.entity';
+import { Pedido } from '../../core/pedidos/entities/pedido.entity';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { PedidosServiceInterface } from 'src/core/pedidos/pedido.service.interface';
 
