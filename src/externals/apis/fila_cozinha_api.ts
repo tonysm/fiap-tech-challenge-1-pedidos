@@ -5,7 +5,7 @@ import { UpdateEtapaPedido } from "./dto/update-etapa-pedido.dto";
 
 @Controller('cozinha/pedidos')
 @ApiTags('cozinha')
-export class FilaCozinhaController {
+export class FilaCozinhaAPI {
   constructor (
     private pedidos: PedidosService,
   ) {}

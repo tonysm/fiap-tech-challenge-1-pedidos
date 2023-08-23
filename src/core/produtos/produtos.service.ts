@@ -15,12 +15,12 @@ export class ProdutosService implements ProdutosServiceInterface {
   ) {}
 
   create(input: CreateProdutoDto) {
-    return this.repository.save(Produto.createFrom({
+    return Produto.createFrom({
       nome: input.nome,
       categoria: input.categoria,
       descricao: input.descricao,
       precoUnitario: input.precoUnitario
-    }))
+    })
   }
 
   findAll() {
@@ -35,14 +35,14 @@ export class ProdutosService implements ProdutosServiceInterface {
     return this.repository.findById(id)
   }
 
-  async update(id: number, { nome, categoria, descricao, precoUnitario }: UpdateProdutoDto) {
+  async update(id: number, {nome, categoria, descricao, precoUnitario}: UpdateProdutoDto) {
     const produto  = await this.repository.findById(id)
 
     if(! produto) {
       throw new ProdutoNaoEncontrado
     }
 
-    this.repository.save(produto.fill({nome, categoria, descricao, precoUnitario}))
+    return produto.fill({nome, categoria, descricao, precoUnitario})
   }
 
   remove(id: number) {

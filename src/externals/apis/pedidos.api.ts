@@ -6,7 +6,7 @@ import { PedidosServiceInterface } from 'src/core/pedidos/pedido.service.interfa
 
 @Controller('pedidos')
 @ApiTags('pedidos')
-export class PedidosController {
+export class PedidosAPI {
     constructor(
       @Inject(PedidosServiceInterface)
       private readonly pedidosService: PedidosServiceInterface,

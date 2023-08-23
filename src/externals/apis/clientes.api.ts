@@ -6,7 +6,7 @@ import { ClientesServiceInterface } from 'src/core/clientes/clientes.service.int
 
 @Controller('clientes')
 @ApiTags('clientes')
-export class ClientesController {
+export class ClientesAPI {
   constructor(
     @Inject(ClientesServiceInterface)
     private readonly clientesService: ClientesServiceInterface

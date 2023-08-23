@@ -10,7 +10,7 @@ import { UpdatePedidoItemDto } from './dto/update-pedido-item.dto';
 
 @Controller('pedidos/:pedido/itens')
 @ApiTags('pedidos')
-export class PedidoItensController {
+export class PedidoItensAPI {
   constructor(
     private readonly pedidos: PedidosService,
     private readonly produtos: ProdutosService,

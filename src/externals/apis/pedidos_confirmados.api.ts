@@ -7,7 +7,7 @@ import { PagamentoFakeGateway } from "src/externals/gateways/pagmento-fake.gatew
 
 @Controller('pedidos/:id/confirm')
 @ApiTags('pedidos')
-export class PedidosConfirmadosController {
+export class PedidosConfirmadosAPI {
   constructor (
     private pedidos: PedidosService,
     @Inject(PagamentoFakeGateway)
