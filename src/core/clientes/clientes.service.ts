@@ -17,11 +17,11 @@ export class ClientesService implements ClientesServiceInterface {
   async create(input: CreateClienteDto) {
     await this.guardAgainstClientDuplication(input.cpf, input.email);
 
-    return await this.repository.save(Cliente.createFrom({
+    return Cliente.createFrom({
       nome: input.nome,
       cpf: input.cpf,
       email: input.email,
-    }));
+    })
   }
 
   findAll() {
@@ -45,7 +45,7 @@ export class ClientesService implements ClientesServiceInterface {
       throw new ClienteNaoEncontrado
     }
 
-    return this.repository.save(cliente.fill({ nome, cpf, email }))
+    return cliente.fill({ nome, cpf, email })
   }
 
   remove(id: number) {

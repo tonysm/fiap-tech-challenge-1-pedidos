@@ -6,6 +6,8 @@ import { Cliente } from './entities/cliente.entity';
 import { ClientesRepositoryInterface } from './repositories/clientes.repository';
 import { ClientesRepository } from 'src/externals/repositories/clientes.repository';
 import { ClientesServiceInterface } from './clientes.service.interface';
+import { ClientesController } from './controller/clientes.controller';
+import { ClientesControllerInterface } from './controller/clientes.controller.interface';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Cliente])],
@@ -16,6 +18,9 @@ import { ClientesServiceInterface } from './clientes.service.interface';
   }, {
     provide: ClientesServiceInterface,
     useClass: ClientesService
+  }, ClientesController, {
+    provide: ClientesControllerInterface,
+    useClass: ClientesController
   }],
   exports: [ClientesRepository]
 })
