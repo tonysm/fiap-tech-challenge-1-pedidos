@@ -16,9 +16,15 @@ export class PedidosConfirmadosAPI {
     private pagamento: PagamentoGateway,
   ) {}
 
-  @Post()
-  @ApiOperation({ summary: "Confirma o pagamento" })
+  @Post("/checkout")
+  @ApiOperation({ summary: "Faz o Checkout do pedido" })
+  checkout(@Param('id') pedidoId: number) {
+    return this.pedidos.checkout(pedidoId, this.pagamento)
+  }
+
+  @Post("/payment")
+  @ApiOperation({ summary: "Recebe retorno da instituição de pagamento " })
   create(@Param('id') pedidoId: number, @Body() input: ConfirmaPedidoDto) {
-    return this.pedidos.confirmaPagamento(pedidoId, this.pagamento);
+    return this.pedidos.confirmaPagamento(pedidoId, input);
   }
 }

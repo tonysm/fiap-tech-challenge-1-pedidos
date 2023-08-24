@@ -11,6 +11,7 @@ import { PedidosRepository } from 'src/externals/repositories/pedidos.repository
 import { PedidosControllerInterface } from './pedidos.controller.interface';
 import { PedidosServiceInterface } from '../pedido.service.interface';
 import { PedidosService } from '../pedidos.service';
+import { ConfirmaPedidoDto } from 'src/externals/apis/dto/confirma-pedido.dto';
 
 @Injectable()
 export class PedidosController implements PedidosControllerInterface {
@@ -56,13 +57,20 @@ export class PedidosController implements PedidosControllerInterface {
     const pedidoAtualizado = await this.pedidosService.removeItem(pedidoId, id)
   }
 
-  async confirmaPagamento(pedidoId: number, pagamentos: PagamentoGateway) {
-    const pedidoAtualizado = await this.pedidosService.confirmaPagamento(pedidoId, pagamentos)
+  async confirmaPagamento(pedidoId: number, input: ConfirmaPedidoDto) {
+    const pedidoAtualizado = await this.pedidosService.confirmaPagamento(pedidoId, input)
     const pedido = await this.repository.save(pedidoAtualizado)
 
     if (pedidoAtualizado.statusPagamento === StatusPagamento.FALHOU) {
         throw new PagamentoFalhou(pedidoAtualizado);
     }
+  }
+
+  async checkout(pedidoId: number, pagamentos: PagamentoGateway) {
+    const pedidoAtualizado = await this.pedidosService.checkout(pedidoId, pagamentos)
+    this.repository.save(pedidoAtualizado)
+
+    return {identificacaoPedido: pedidoAtualizado.id}
   }
 
   async atualizaStatusDoPedido(id: number, status: Status) {

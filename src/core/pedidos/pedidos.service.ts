@@ -9,6 +9,7 @@ import { PagamentoGateway } from '../pagamentos/pagamento.gateway';
 import { PedidosRepositoryInterface } from './repositories/pedidos.repository';
 import { PedidosRepository } from 'src/externals/repositories/pedidos.repository';
 import { PedidosServiceInterface } from './pedido.service.interface';
+import { ConfirmaPedidoDto } from 'src/externals/apis/dto/confirma-pedido.dto';
 
 @Injectable()
 export class PedidosService implements PedidosServiceInterface {
@@ -64,11 +65,17 @@ export class PedidosService implements PedidosServiceInterface {
     return aggregate.toEntity()
   }
 
-  async confirmaPagamento(pedidoId: number, pagamentos: PagamentoGateway) {
+  async confirmaPagamento(pedidoId: number, input: ConfirmaPedidoDto) {
     const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId)
 
-    await aggregate.confirmaPagamento(pagamentos);
+    await aggregate.confirmaPagamento(input);
 
+    return aggregate.toEntity()
+  }
+
+  async checkout(pedidoId: number, pagamentos: PagamentoGateway) {
+    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId)
+    aggregate.checkout(pagamentos)
     return aggregate.toEntity()
   }
 

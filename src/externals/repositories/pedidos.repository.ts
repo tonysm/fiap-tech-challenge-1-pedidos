@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Item } from "src/core/pedidos/entities/item.entity";
-import { Pedido, Status } from "src/core/pedidos/entities/pedido.entity";
+import { Pedido, Status, StatusPagamento } from "src/core/pedidos/entities/pedido.entity";
 import { PedidoNaoEncontrado } from "src/core/pedidos/exceptions/pedido.exception";
 import { PedidosRepositoryInterface } from "src/core/pedidos/repositories/pedidos.repository";
 import { Repository } from "typeorm";
@@ -22,6 +22,7 @@ export class PedidosRepository implements PedidosRepositoryInterface {
     findAllParaCozinha(): Promise<Pedido[]> {
         return this.pedidos.createQueryBuilder('pedido')
             .where('pedido.status NOT IN (:status)', { status: [Status.CRIANDO, Status.FINALIZADO] })
+            .andWhere('pedido.statusPagamento in (:statusPagamento)', {statusPagamento: [StatusPagamento.SUCESSO]})
             .innerJoinAndSelect("pedido.itens", "item")
             .leftJoinAndSelect("pedido.cliente", "cliente")
             .getMany()

@@ -3,6 +3,7 @@ import { ItemVO } from "./../vo/item.vo"
 import { UpdatePedidoItemDto } from "src/externals/apis/dto/update-pedido-item.dto"
 import { PagamentoGateway } from "../../pagamentos/pagamento.gateway"
 import { Status } from "./../entities/pedido.entity"
+import { ConfirmaPedidoDto } from "src/externals/apis/dto/confirma-pedido.dto"
 
 export interface PedidosControllerInterface {
     findAll()
@@ -13,7 +14,8 @@ export interface PedidosControllerInterface {
     updateItem(pedidoId: number, itemId: number, input: UpdatePedidoItemDto)
     findOneItem(id: number)
     removeItem(pedidoId: number, id: number)
-    confirmaPagamento(pedidoId: number, pagamentos: PagamentoGateway)
+    confirmaPagamento(pedidoId: number, input: ConfirmaPedidoDto)
+    checkout(pedidoId: number, pagamentos: PagamentoGateway)
     atualizaStatusDoPedido(id: number, status: Status)
 }
 export const PedidosControllerInterface = Symbol('PedidosControllerInterface')
