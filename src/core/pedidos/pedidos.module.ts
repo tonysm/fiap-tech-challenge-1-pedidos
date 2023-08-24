@@ -14,6 +14,8 @@ import { PedidosConfirmadosAPI } from 'src/externals/apis/pedidos_confirmados.ap
 import { FilaCozinhaAPI } from 'src/externals/apis/fila_cozinha_api';
 import { PedidosRepository } from 'src/externals/repositories/pedidos.repository';
 import { PedidosServiceInterface } from './pedido.service.interface';
+import { PedidosController } from './controller/pedidos.controller';
+import { PedidosControllerInterface } from './controller/pedidos.controller.interface';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Pedido, Item]), ProdutosModule, ClientesModule],
@@ -28,6 +30,10 @@ import { PedidosServiceInterface } from './pedido.service.interface';
     ProdutosService,
     PedidosRepository,
     PagamentoFakeGateway,
+    PedidosController, {
+      provide: PedidosControllerInterface,
+      useClass: PedidosController
+    }
   ],
   exports: [PagamentoFakeGateway, PedidosRepository],
 })

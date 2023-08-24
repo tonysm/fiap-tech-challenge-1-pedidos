@@ -2,14 +2,15 @@ import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Pedido } from '../../core/pedidos/entities/pedido.entity';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
-import { PedidosServiceInterface } from 'src/core/pedidos/pedido.service.interface';
+import { PedidosController } from 'src/core/pedidos/controller/pedidos.controller';
+import { PedidosControllerInterface } from 'src/core/pedidos/controller/pedidos.controller.interface';
 
 @Controller('pedidos')
 @ApiTags('pedidos')
 export class PedidosAPI {
     constructor(
-      @Inject(PedidosServiceInterface)
-      private readonly pedidosService: PedidosServiceInterface,
+      @Inject(PedidosController)
+      private readonly pedidosService: PedidosControllerInterface,
     ) {}
 
     @Get()

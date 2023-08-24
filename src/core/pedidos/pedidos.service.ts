@@ -32,8 +32,7 @@ export class PedidosService implements PedidosServiceInterface {
 
   async create(input: CreatePedidoDto) {
     const pedidoAggregate = await this.pedidoAggregateFactory.createNew(input)
-
-    return this.repository.save(pedidoAggregate.toEntity());
+    return pedidoAggregate.toEntity()
   }
 
   async addItem(id: number, item: ItemVO) {
@@ -41,7 +40,7 @@ export class PedidosService implements PedidosServiceInterface {
 
     pedidoAggregate.adicionarItem(item);
 
-    return this.repository.save(pedidoAggregate.toEntity());
+    return pedidoAggregate.toEntity()
   }
 
   async updateItem(pedidoId: number, itemId: number, input: UpdatePedidoItemDto) {
@@ -49,7 +48,7 @@ export class PedidosService implements PedidosServiceInterface {
 
     aggregate.atualizaItem(itemId, input.quantidade, input.observacao)
 
-    return this.repository.save(aggregate.toEntity());
+    return aggregate.toEntity()
   }
 
   findOneItem(id: number) {
@@ -62,6 +61,7 @@ export class PedidosService implements PedidosServiceInterface {
     aggregate.removeItem(id)
 
     this.repository.deleteItem(id);
+    return aggregate.toEntity()
   }
 
   async confirmaPagamento(pedidoId: number, pagamentos: PagamentoGateway) {
@@ -69,13 +69,7 @@ export class PedidosService implements PedidosServiceInterface {
 
     await aggregate.confirmaPagamento(pagamentos);
 
-    const pedido = await this.repository.save(aggregate.toEntity())
-
-    if (pedido.statusPagamento === StatusPagamento.FALHOU) {
-        throw new PagamentoFalhou(pedido);
-    }
-
-    return pedido;
+    return aggregate.toEntity()
   }
 
   async atualizaStatusDoPedido(id: number, status: Status) {
@@ -96,7 +90,7 @@ export class PedidosService implements PedidosServiceInterface {
 
     aggregate.iniciarPreparacaoDoPedido()
 
-    this.repository.save(aggregate.toEntity())
+    return aggregate.toEntity()
   }
 
   private async encerrarPreparacaoDoPedido(id: number) {
@@ -104,7 +98,7 @@ export class PedidosService implements PedidosServiceInterface {
 
     aggregate.encerrarPreparacaoDoPedido()
 
-    this.repository.save(aggregate.toEntity())
+    return aggregate.toEntity()
   }
 
   private async finalizarPedido(id: number) {
@@ -112,6 +106,6 @@ export class PedidosService implements PedidosServiceInterface {
 
     aggregate.finalizarPedido()
 
-    this.repository.save(aggregate.toEntity())
+    return aggregate.toEntity()
   }
 }

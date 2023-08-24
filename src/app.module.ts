@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AppAPI } from './externals/apis/app.api';
 import { PedidosModule } from './core/pedidos/pedidos.module';
 import { ProdutosModule } from './core/produtos/produtos.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -29,7 +28,7 @@ import { ClientesModule } from './core/clientes/clientes.module';
     ProdutosModule,
     ClientesModule,
   ],
-  controllers: [AppAPI],
+  controllers: [],
   providers: [],
 })
 export class AppModule {}
