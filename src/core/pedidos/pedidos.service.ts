@@ -115,4 +115,9 @@ export class PedidosService implements PedidosServiceInterface {
 
     return aggregate.toEntity()
   }
+
+  async statusPagamento(pedidoId: number) {
+    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId)
+    return aggregate.getStatusPagamento()
+  }
 }

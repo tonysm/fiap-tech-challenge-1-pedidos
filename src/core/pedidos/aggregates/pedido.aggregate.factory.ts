@@ -28,6 +28,7 @@ export class PedidoAggregateFactory {
     return new PedidoAggregate(
       Status.CRIANDO,
       StatusPagamento.PENDENTE,
+      null,
       [],
       cliente,
     )
@@ -50,6 +51,7 @@ export class PedidoAggregateFactory {
     const aggregate = new PedidoAggregate(
       pedido.status,
       pedido.statusPagamento,
+      pedido.dataConfirmacaoPagamento,
       itensVO,
       pedido.cliente,
     )

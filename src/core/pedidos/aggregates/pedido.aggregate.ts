@@ -2,7 +2,7 @@ import { Cliente } from "src/core/clientes/entities/cliente.entity";
 import { ItemVO } from "../vo/item.vo";
 import { Pedido, Status, StatusPagamento } from "../entities/pedido.entity";
 import { IdentifiableObject } from "src/core/bases/identifiable.object";
-import { NaoPodeAlterarPedido, PedidoSemItens, StatusDoPagamentoInvalidoParaIniciarPreparacao, StatusInvalidoParaFinalizado, StatusInvalidoParaIniciarPreparacao, StatusInvalidoParaPronto } from "../exceptions/pedido.exception";
+import { NaoPodeAlterarPedido, PedidoEmEtapaInvalidaParaRealizarOperacao, PedidoSemItens, StatusDoPagamentoInvalidoParaIniciarPreparacao, StatusInvalidoParaFinalizado, StatusInvalidoParaIniciarPreparacao, StatusInvalidoParaPronto } from "../exceptions/pedido.exception";
 import { PagamentoGateway } from "src/core/pagamentos/pagamento.gateway";
 import { ConfirmaPedidoDto } from "src/externals/apis/dto/confirma-pedido.dto";
 
@@ -10,8 +10,9 @@ export class PedidoAggregate extends IdentifiableObject {
   constructor(
     private status: Status,
     private statusPagamento: StatusPagamento,
+    private dataConfirmacaoPagamento: Date,
     private itens: ItemVO[],
-    private cliente?: Cliente,
+    private cliente?: Cliente
   ) {
     super()
   }
@@ -74,10 +75,11 @@ export class PedidoAggregate extends IdentifiableObject {
 
   confirmaPagamento(input: ConfirmaPedidoDto) {
     if (this.statusPagamento === StatusPagamento.SUCESSO) throw new NaoPodeAlterarPedido;
-    if (this.status !== Status.RECEBIDO) throw new NaoPodeAlterarPedido;
+    if (this.status !== Status.RECEBIDO) throw new PedidoEmEtapaInvalidaParaRealizarOperacao;
 
     
     this.statusPagamento = input.statusPagamento
+    this.dataConfirmacaoPagamento = new Date()
   }
 
   checkout(pagamentos: PagamentoGateway) {
@@ -89,6 +91,10 @@ export class PedidoAggregate extends IdentifiableObject {
     return pagamentos.checkout(this)
   }
 
+  getStatusPagamento() {
+    return this.statusPagamento
+  }
+
   toEntity(): Pedido {
     const pedido = new Pedido()
 
@@ -97,6 +103,7 @@ export class PedidoAggregate extends IdentifiableObject {
     pedido.itens = this.itens.map(item => item.toEntity());
     pedido.status = this.status
     pedido.statusPagamento = this.statusPagamento
+    pedido.dataConfirmacaoPagamento = this.dataConfirmacaoPagamento
 
     return pedido
   }

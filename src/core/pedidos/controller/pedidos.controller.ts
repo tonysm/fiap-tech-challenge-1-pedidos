@@ -77,4 +77,10 @@ export class PedidosController implements PedidosControllerInterface {
     const pedidoAtualizado = await this.pedidosService.atualizaStatusDoPedido(id, status)
     this.repository.save(pedidoAtualizado)
   }
+
+  async statusPagamento(pedidoId: number) {
+    const paymentStatus = await this.pedidosService.statusPagamento(pedidoId)
+    return {statusPagamento: paymentStatus}
+  }
+
 }
