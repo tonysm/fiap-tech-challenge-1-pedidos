@@ -1,3 +1,0 @@
-export class ConfirmaPedidoDto {
-  // Aqui nós poderiamos ter o payload dos pagamentos...
-}

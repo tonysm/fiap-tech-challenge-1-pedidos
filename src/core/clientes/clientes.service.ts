@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateClienteDto } from '../../adapter/driver/controllers/dto/create-cliente.dto';
-import { UpdateClienteDto } from 'src/adapter/driver/controllers/dto/update-cliente.dto';
+import { CreateClienteDto } from '../../externals/apis/dto/create-cliente.dto';
+import { UpdateClienteDto } from 'src/externals/apis/dto/update-cliente.dto';
 import { ClientesRepositoryInterface } from './repositories/clientes.repository';
 import { Cliente } from './entities/cliente.entity';
 import { ClienteNaoEncontrado, DuplicidadeDeCpf, DuplicidadeDeEmail } from './exceptions/cliente.exception';
-import { ClientesRepository } from 'src/adapter/driven/infrastructure/repositories/clientes.repository';
+import { ClientesRepository } from 'src/externals/repositories/clientes.repository';
 import { ClientesServiceInterface } from './clientes.service.interface';
 
 @Injectable()
@@ -17,11 +17,11 @@ export class ClientesService implements ClientesServiceInterface {
   async create(input: CreateClienteDto) {
     await this.guardAgainstClientDuplication(input.cpf, input.email);
 
-    return await this.repository.save(Cliente.createFrom({
+    return Cliente.createFrom({
       nome: input.nome,
       cpf: input.cpf,
       email: input.email,
-    }));
+    })
   }
 
   findAll() {
@@ -45,7 +45,7 @@ export class ClientesService implements ClientesServiceInterface {
       throw new ClienteNaoEncontrado
     }
 
-    return this.repository.save(cliente.fill({ nome, cpf, email }))
+    return cliente.fill({ nome, cpf, email })
   }
 
   remove(id: number) {

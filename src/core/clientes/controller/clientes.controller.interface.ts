@@ -1,7 +1,7 @@
-import { CreateClienteDto } from '../../externals/apis/dto/create-cliente.dto';
+import { CreateClienteDto } from '../../../externals/apis/dto/create-cliente.dto';
 import { UpdateClienteDto } from 'src/externals/apis/dto/update-cliente.dto';
 
-export interface ClientesServiceInterface {
+export interface ClientesControllerInterface {
   create(input: CreateClienteDto)
   findAll()
   findOne(id: number)
@@ -10,4 +10,4 @@ export interface ClientesServiceInterface {
   remove(id: number)
 }
 
-export const ClientesServiceInterface = Symbol('ClientesServiceInterface')
+export const ClientesControllerInterface = Symbol('ClientesControllerInterface')

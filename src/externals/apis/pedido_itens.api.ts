@@ -1,18 +1,20 @@
-import { Controller, Post, Body, Param, Delete, Patch } from '@nestjs/common';
+import { Controller, Post, Body, Param, Delete, Patch, Inject } from '@nestjs/common';
 
 import { CreatePedidoItemDto } from './dto/create-pedido-item.dto';
-import { PedidosService } from 'src/core/pedidos/pedidos.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ProdutosService } from 'src/core/produtos/produtos.service';
 import { ProdutoNaoEncontrado } from 'src/core/produtos/exceptions/produto.exception';
 import { ItemVO } from 'src/core/pedidos/vo/item.vo';
 import { UpdatePedidoItemDto } from './dto/update-pedido-item.dto';
+import { PedidosControllerInterface } from 'src/core/pedidos/controller/pedidos.controller.interface';
+import { PedidosController } from 'src/core/pedidos/controller/pedidos.controller';
 
 @Controller('pedidos/:pedido/itens')
 @ApiTags('pedidos')
-export class PedidoItensController {
+export class PedidoItensAPI {
   constructor(
-    private readonly pedidos: PedidosService,
+    @Inject(PedidosController)
+    private readonly pedidos: PedidosControllerInterface,
     private readonly produtos: ProdutosService,
   ) {}
 

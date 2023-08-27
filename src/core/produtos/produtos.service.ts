@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateProdutoDto } from '../../adapter/driver/controllers/dto/create-produto.dto';
-import { UpdateProdutoDto } from 'src/adapter/driver/controllers/dto/update-produto.dto';
+import { CreateProdutoDto } from '../../externals/apis/dto/create-produto.dto';
+import { UpdateProdutoDto } from 'src/externals/apis/dto/update-produto.dto';
 import { Categoria, Produto } from './entities/produto.entity';
 import { ProdutosRepositoryInterface } from './repositories/produtos.repository';
-import { ProdutosRepository } from 'src/adapter/driven/infrastructure/repositories/produtos.repository';
+import { ProdutosRepository } from 'src/externals/repositories/produtos.repository';
 import { ProdutoNaoEncontrado } from './exceptions/produto.exception';
 import { ProdutosServiceInterface } from './produtos.service.interface';
 
@@ -15,12 +15,12 @@ export class ProdutosService implements ProdutosServiceInterface {
   ) {}
 
   create(input: CreateProdutoDto) {
-    return this.repository.save(Produto.createFrom({
+    return Produto.createFrom({
       nome: input.nome,
       categoria: input.categoria,
       descricao: input.descricao,
       precoUnitario: input.precoUnitario
-    }))
+    })
   }
 
   findAll() {
@@ -35,14 +35,14 @@ export class ProdutosService implements ProdutosServiceInterface {
     return this.repository.findById(id)
   }
 
-  async update(id: number, { nome, categoria, descricao, precoUnitario }: UpdateProdutoDto) {
+  async update(id: number, {nome, categoria, descricao, precoUnitario}: UpdateProdutoDto) {
     const produto  = await this.repository.findById(id)
 
     if(! produto) {
       throw new ProdutoNaoEncontrado
     }
 
-    this.repository.save(produto.fill({nome, categoria, descricao, precoUnitario}))
+    return produto.fill({nome, categoria, descricao, precoUnitario})
   }
 
   remove(id: number) {

@@ -1,15 +1,16 @@
 import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Pedido } from '../../../core/pedidos/entities/pedido.entity';
+import { Pedido } from '../../core/pedidos/entities/pedido.entity';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
-import { PedidosServiceInterface } from 'src/core/pedidos/pedido.service.interface';
+import { PedidosController } from 'src/core/pedidos/controller/pedidos.controller';
+import { PedidosControllerInterface } from 'src/core/pedidos/controller/pedidos.controller.interface';
 
 @Controller('pedidos')
 @ApiTags('pedidos')
-export class PedidosController {
+export class PedidosAPI {
     constructor(
-      @Inject(PedidosServiceInterface)
-      private readonly pedidosService: PedidosServiceInterface,
+      @Inject(PedidosController)
+      private readonly pedidosController: PedidosControllerInterface,
     ) {}
 
     @Get()
@@ -20,7 +21,7 @@ export class PedidosController {
         type: Array<Pedido>,
     })
     index() {
-      return this.pedidosService.findAll()
+      return this.pedidosController.findAll()
     }
 
     @Post()
@@ -28,12 +29,12 @@ export class PedidosController {
     @ApiResponse({ status: 403, description: 'Forbidden.' })
     @ApiResponse({ status: 200, type: Pedido })
     async create(@Body() input: CreatePedidoDto) {
-      return this.pedidosService.create(input);
+      return this.pedidosController.create(input);
     }
 
     @ApiOperation({ summary: 'Busca pedido por id' })
     @Get(':id')
     show(@Param('id') id: number) {
-      return this.pedidosService.findOne(id);
+      return this.pedidosController.findOne(id);
     }
 }

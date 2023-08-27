@@ -1,14 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreatePedidoDto } from 'src/adapter/driver/controllers/dto/create-pedido.dto';
+import { CreatePedidoDto } from 'src/externals/apis/dto/create-pedido.dto';
 import { Status, StatusPagamento } from './entities/pedido.entity';
 import { PedidoAggregateFactory } from './aggregates/pedido.aggregate.factory';
 import { PagamentoFalhou, StatusInvalidoException } from './exceptions/pedido.exception';
 import { ItemVO } from './vo/item.vo';
-import { UpdatePedidoItemDto } from 'src/adapter/driver/controllers/dto/update-pedido-item.dto';
+import { UpdatePedidoItemDto } from 'src/externals/apis/dto/update-pedido-item.dto';
 import { PagamentoGateway } from '../pagamentos/pagamento.gateway';
 import { PedidosRepositoryInterface } from './repositories/pedidos.repository';
-import { PedidosRepository } from 'src/adapter/driven/infrastructure/repositories/pedidos.repository';
+import { PedidosRepository } from 'src/externals/repositories/pedidos.repository';
 import { PedidosServiceInterface } from './pedido.service.interface';
+import { ConfirmaPedidoDto } from 'src/externals/apis/dto/confirma-pedido.dto';
 
 @Injectable()
 export class PedidosService implements PedidosServiceInterface {
@@ -32,8 +33,7 @@ export class PedidosService implements PedidosServiceInterface {
 
   async create(input: CreatePedidoDto) {
     const pedidoAggregate = await this.pedidoAggregateFactory.createNew(input)
-
-    return this.repository.save(pedidoAggregate.toEntity());
+    return pedidoAggregate.toEntity()
   }
 
   async addItem(id: number, item: ItemVO) {
@@ -41,7 +41,7 @@ export class PedidosService implements PedidosServiceInterface {
 
     pedidoAggregate.adicionarItem(item);
 
-    return this.repository.save(pedidoAggregate.toEntity());
+    return pedidoAggregate.toEntity()
   }
 
   async updateItem(pedidoId: number, itemId: number, input: UpdatePedidoItemDto) {
@@ -49,7 +49,7 @@ export class PedidosService implements PedidosServiceInterface {
 
     aggregate.atualizaItem(itemId, input.quantidade, input.observacao)
 
-    return this.repository.save(aggregate.toEntity());
+    return aggregate.toEntity()
   }
 
   findOneItem(id: number) {
@@ -62,20 +62,21 @@ export class PedidosService implements PedidosServiceInterface {
     aggregate.removeItem(id)
 
     this.repository.deleteItem(id);
+    return aggregate.toEntity()
   }
 
-  async confirmaPagamento(pedidoId: number, pagamentos: PagamentoGateway) {
+  async confirmaPagamento(pedidoId: number, input: ConfirmaPedidoDto) {
     const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId)
 
-    await aggregate.confirmaPagamento(pagamentos);
+    await aggregate.confirmaPagamento(input);
 
-    const pedido = await this.repository.save(aggregate.toEntity())
+    return aggregate.toEntity()
+  }
 
-    if (pedido.statusPagamento === StatusPagamento.FALHOU) {
-        throw new PagamentoFalhou(pedido);
-    }
-
-    return pedido;
+  async checkout(pedidoId: number, pagamentos: PagamentoGateway) {
+    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId)
+    aggregate.checkout(pagamentos)
+    return aggregate.toEntity()
   }
 
   async atualizaStatusDoPedido(id: number, status: Status) {
@@ -96,7 +97,7 @@ export class PedidosService implements PedidosServiceInterface {
 
     aggregate.iniciarPreparacaoDoPedido()
 
-    this.repository.save(aggregate.toEntity())
+    return aggregate.toEntity()
   }
 
   private async encerrarPreparacaoDoPedido(id: number) {
@@ -104,7 +105,7 @@ export class PedidosService implements PedidosServiceInterface {
 
     aggregate.encerrarPreparacaoDoPedido()
 
-    this.repository.save(aggregate.toEntity())
+    return aggregate.toEntity()
   }
 
   private async finalizarPedido(id: number) {
@@ -112,6 +113,6 @@ export class PedidosService implements PedidosServiceInterface {
 
     aggregate.finalizarPedido()
 
-    this.repository.save(aggregate.toEntity())
+    return aggregate.toEntity()
   }
 }

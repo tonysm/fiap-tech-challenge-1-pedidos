@@ -9,6 +9,12 @@ export class StatusInvalidoParaIniciarPreparacao extends PedidoException {
     }
 }
 
+export class StatusDoPagamentoInvalidoParaIniciarPreparacao extends PedidoException {
+    constructor () {
+        super('Pedido deve ter sido pago para iniciar a preparação', HttpStatus.BAD_REQUEST)
+    }
+}
+
 export class StatusInvalidoParaPronto extends PedidoException {
     constructor () {
         super('Pedido deve estar sendo preparado para ser marcado como pronto', HttpStatus.BAD_REQUEST)
