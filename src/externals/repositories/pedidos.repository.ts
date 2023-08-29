@@ -4,7 +4,7 @@ import { Item } from "src/core/pedidos/entities/item.entity";
 import { Pedido, Status, StatusPagamento } from "src/core/pedidos/entities/pedido.entity";
 import { PedidoNaoEncontrado } from "src/core/pedidos/exceptions/pedido.exception";
 import { PedidosRepositoryInterface } from "src/core/pedidos/repositories/pedidos.repository";
-import { Repository } from "typeorm";
+import { Repository, getConnection } from "typeorm";
 
 @Injectable()
 export class PedidosRepository implements PedidosRepositoryInterface {
@@ -19,13 +19,24 @@ export class PedidosRepository implements PedidosRepositoryInterface {
         return this.pedidos.find({ loadEagerRelations: true })
     }
 
-    findAllParaCozinha(): Promise<Pedido[]> {
-        return this.pedidos.createQueryBuilder('pedido')
-            .where('pedido.status NOT IN (:status)', { status: [Status.CRIANDO, Status.FINALIZADO] })
-            .andWhere('pedido.statusPagamento in (:statusPagamento)', {statusPagamento: [StatusPagamento.SUCESSO]})
-            .innerJoinAndSelect("pedido.itens", "item")
-            .leftJoinAndSelect("pedido.cliente", "cliente")
-            .getMany()
+    async findAllParaCozinha(): Promise<Pedido[]> {
+        return await this.pedidos.query(
+                `
+                SELECT 
+                *
+                FROM pedido p
+                WHERE
+                    p.status IN ('PRONTO', 'EM_PREPARACAO', 'RECEBIDO')
+                    AND p.statusPagamento  = 'SUCESSO'
+                ORDER BY
+                CASE
+                    WHEN p.status = 'PRONTO' THEN 1
+                    WHEN p.status = 'EM_PREPARACAO' THEN 2
+                    WHEN p.status = 'RECEBIDO' THEN 3
+                    else -1
+                END, p.dataConfirmacaoPagamento
+                `
+        )
     }
 
     async findOneOrFail(id: number): Promise<Pedido> {

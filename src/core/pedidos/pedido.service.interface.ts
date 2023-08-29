@@ -18,5 +18,6 @@ export interface PedidosServiceInterface {
     confirmaPagamento(pedidoId: number, input: ConfirmaPedidoDto)
     checkout(pedidoId: number, pagamentos: PagamentoGateway)
     atualizaStatusDoPedido(id: number, status: Status)
+    statusPagamento(pedidoId: number)
 }
 export const PedidosServiceInterface = Symbol('PedidosServiceInterface')

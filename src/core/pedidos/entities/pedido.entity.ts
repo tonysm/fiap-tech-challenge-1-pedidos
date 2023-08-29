@@ -38,4 +38,7 @@ export class Pedido {
   @Column({ type: 'enum', enum: StatusPagamento, default: StatusPagamento.PENDENTE })
   @ApiProperty({ example: StatusPagamento.PENDENTE, description: 'O status do pagamento do pedido', enum: StatusPagamento })
   statusPagamento: StatusPagamento;
+
+  @Column({ type: 'timestamp', nullable: true })
+  dataConfirmacaoPagamento: Date
 }

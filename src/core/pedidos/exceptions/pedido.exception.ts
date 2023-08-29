@@ -45,6 +45,12 @@ export class NaoPodeAlterarPedido extends PedidoException {
     }
 }
 
+export class PedidoEmEtapaInvalidaParaRealizarOperacao extends PedidoException {
+    constructor() {
+        super('Não é permitido realizar essa operação na etapa atual do pedido', HttpStatus.BAD_REQUEST)
+    }
+}
+
 export class PedidoSemItens extends PedidoException {
     constructor() {
         super('Pedido sem itens.', HttpStatus.UNPROCESSABLE_ENTITY)
