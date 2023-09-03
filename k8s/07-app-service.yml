@@ -1,0 +1,18 @@
+---
+# Source: fiap-pedidos/templates/app/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: fiap-pedidos-svc
+  labels:
+    app: fiap-pedidos
+spec:
+  type: NodePort
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30001
+      protocol: TCP
+      name: http
+  selector:
+    app: fiap-pedidos

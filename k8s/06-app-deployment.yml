@@ -1,0 +1,47 @@
+---
+# Source: fiap-pedidos/templates/app/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fiap-pedidos-01-deployment
+  labels:
+    app: fiap-pedidos
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fiap-pedidos
+  template:
+    metadata:
+      labels:
+        app: fiap-pedidos
+    spec:
+      securityContext:
+        {}
+      containers:
+        - name: fiap-pedidos
+          image: kidush/fiap-pedidos:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-fiap-secret
+                  key: MYSQL_PASSWORD
+          envFrom:
+            - configMapRef:
+                name: fiap-pedidos-config
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /api
+              port: 3000
+          readinessProbe:
+            httpGet:
+              path: /api
+              port: 3000
+          resources:
+            null

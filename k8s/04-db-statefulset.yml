@@ -1,0 +1,49 @@
+---
+# Source: fiap-pedidos/templates/db/statefulset.yaml
+# https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-fiap-sts
+spec:
+  selector:
+    matchLabels:
+      app: mysql-fiap
+  serviceName: mysql-fiap
+  template:
+    metadata:
+      labels:
+        app: mysql-fiap
+    spec:
+      containers:
+      - name: mysql-fiap
+        image: mysql/mysql-server:8.0
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysql-fiap-secret
+                key: MYSQL_ROOT_PASSWORD
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysql-fiap-secret
+                key: MYSQL_PASSWORD
+        envFrom:
+          - configMapRef:
+              name: mysql-fiap-config
+        ports:
+        - containerPort: 3306
+          name: mysql-fiap
+        volumeMounts:
+        - name: mysql-fiap-pvc
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-fiap-pvc
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi

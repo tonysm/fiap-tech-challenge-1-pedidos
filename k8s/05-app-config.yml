@@ -1,0 +1,13 @@
+---
+# Source: fiap-pedidos/templates/app/config.yaml
+# https://kubernetes.io/docs/concepts/configuration/configmap/
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: default
+  name: fiap-pedidos-config
+data:
+  DB_DATABASE: "fiap-pedidos"
+  DB_HOST: "mysql-fiap"
+  DB_PORT: "3306"
+  DB_USERNAME: "fiap"
