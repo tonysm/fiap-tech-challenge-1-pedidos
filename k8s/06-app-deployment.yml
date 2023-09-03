@@ -7,7 +7,7 @@ metadata:
   labels:
     app: fiap-pedidos
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: fiap-pedidos
