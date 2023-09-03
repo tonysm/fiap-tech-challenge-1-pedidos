@@ -18,20 +18,11 @@ spec:
       containers:
       - name: mysql-fiap
         image: mysql/mysql-server:8.0
-        env:
-          - name: MYSQL_ROOT_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: mysql-fiap-secret
-                key: MYSQL_ROOT_PASSWORD
-          - name: MYSQL_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: mysql-fiap-secret
-                key: MYSQL_PASSWORD
         envFrom:
           - configMapRef:
               name: mysql-fiap-config
+          - secretRef:
+              name: mysql-fiap-secret
         ports:
         - containerPort: 3306
           name: mysql-fiap
