@@ -154,3 +154,20 @@ curl -X 'PUT' \
   "status": "FINALIZADO"
 }'
 ```
+
+## Deployment no Kubernetes
+
+Nossos templates para deployment no K8s estão na pasta [`k8s/`](./k8s/). Para fazer o deploy da aplicação basta apenas executar:
+
+```bash
+kubectl apply -f k8s/
+```
+
+Após isso, a aplicação irá inicializar. Estamos contando que o deployment será feito no Minikube. Para testar a aplicação no browser, é só pegar o IP da VM do Minikube e abrir na porta `30001` no navegador:
+
+```bash
+minikube ip
+192.168.49.2 # exemplo
+```
+
+Nesse exemplo, é só acessar: http://192.168.49.2:30001, mas o seu IP pode ser diferente.
