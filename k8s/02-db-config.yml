@@ -1,0 +1,11 @@
+---
+# Source: fiap-pedidos/templates/db/config.yaml
+# https://kubernetes.io/docs/concepts/configuration/configmap/
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-fiap-config
+data:
+  MYSQL_DATABASE: "fiap-pedidos"
+  MYSQL_ROOT_HOST: "%"
+  MYSQL_USER: "fiap"
