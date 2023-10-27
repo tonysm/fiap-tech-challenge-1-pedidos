@@ -1,0 +1,38 @@
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+jobs:
+  build:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+  
+      - name: Setup Docker
+        uses: docker/setup-buildx-action@v1
+  
+      - name: Build Docker Image
+        run: docker build -t pedidos-service-tech-challenge:$GITHUB_SHA .
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v0.3.0
+        with:
+          project_id: fiap-tech-challenge-403000
+          service_account_key: ${{secrets.SERVICE_ACCOUNT_KEY}}
+          export_default_credentials: true
+
+      - name: Auth gcloud docker
+        run: gcloud auth configure-docker
+
+      - name: Push docker image to gcp container registry
+        env:
+          REVISION: 2.1
+        run: |-
+          docker tag pedidos-service-tech-challenge:$GITHUB_SHA gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:$GITHUB_SHA
+          docker push gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:$GITHUB_SHA
