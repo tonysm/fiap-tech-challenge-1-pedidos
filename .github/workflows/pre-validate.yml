@@ -1,0 +1,18 @@
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+  
+      - name: Setup Docker
+        uses: docker/setup-buildx-action@v1
+  
+      - name: Build Docker Image
+        run: docker build -t pedidos-service-tech-challenge:$GITHUB_SHA .
