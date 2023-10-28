@@ -32,7 +32,7 @@ export class ClientesAPI {
     const cliente = await this.clientesController.findByCpf(cpf);
 
     if (! cliente) {
-        throw new HttpException("Cliente não encontrado", HttpStatus.NOT_FOUND);
+        throw new HttpException("Cliente não encontrado AAA", HttpStatus.NOT_FOUND);
     }
 
     return cliente;
