@@ -13,9 +13,9 @@ import { ClientesModule } from './core/clientes/clientes.module';
         useFactory(configService: ConfigService) {
             return {
                 type: 'mysql',
-                host: configService.get<string>('DB_HOST'),
+                host: '/cloudsql/' + configService.get<string>('DB_HOST'),
                 extra: {
-                  socketPath: configService.get<string>('DB_HOST'),
+                  socketPath: '/cloudsql/' + configService.get<string>('DB_HOST'),
                 },
                 port: configService.get<number>('DB_PORT'),
                 username: configService.get<string>('DB_USERNAME'),
