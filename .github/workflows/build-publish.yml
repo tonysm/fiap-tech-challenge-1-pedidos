@@ -27,7 +27,7 @@ jobs:
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v0.3.0
         with:
-          project_id: fiap-tech-challenge-403000
+          project_id: ${{vars.PROJECT_ID}}
           service_account_key: ${{secrets.SERVICE_ACCOUNT_KEY}}
           export_default_credentials: true
 
@@ -38,12 +38,18 @@ jobs:
         env:
           REVISION: 2.1
         run: |-
-          docker tag pedidos-service-tech-challenge:${{ steps.revision.outputs.sha_short }} gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:${{ steps.revision.outputs.sha_short }}
-          docker push gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:${{ steps.revision.outputs.sha_short }}
+          docker tag pedidos-service-tech-challenge:${{ steps.revision.outputs.sha_short }} gcr.io/${{vars.PROJECT_ID}}/pedidos-service-tech-challenge:${{ steps.revision.outputs.sha_short }}
+          docker push gcr.io/${{vars.PROJECT_ID}}/pedidos-service-tech-challenge:${{ steps.revision.outputs.sha_short }}
 
       - name: Deploy to CloudRun
         uses: google-github-actions/deploy-cloudrun@v1
         with:
-          service: pedidos-service
-          image: gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:${{ steps.revision.outputs.sha_short }}
-          region: southamerica-east1
+          flags: ${{vars.DEPLOY_CONFIGS}}
+          secrets: |
+            DB_HOST=${{vars.DEPLOY_DB_HOST_SECRET_NAME}}
+            DB_DATABASE=${{vars.DEPLOY_DB_DATABASE_SECRET_NAME}}
+            DB_USERNAME=${{vars.DEPLOY_DB_USERNAME_SECRET_NAME}}
+            DB_PASSWORD=${{vars.DEPLOY_DB_PASSWORD_SECRET_NAME}}
+          service: ${{vars.SERVICE_NAME}}
+          image: gcr.io/${{vars.PROJECT_ID}}/pedidos-service-tech-challenge:${{ steps.revision.outputs.sha_short }}
+          region: ${{vars.DEPLOY_REGION}}
