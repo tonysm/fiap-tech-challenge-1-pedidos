@@ -17,7 +17,7 @@ import { ClientesModule } from './core/clientes/clientes.module';
                 extra: {
                   socketPath: '/cloudsql/' + configService.get<string>('DB_HOST'),
                 },
-                port: configService.get<number>('DB_PORT'),
+                port: 3306,
                 username: configService.get<string>('DB_USERNAME'),
                 password: configService.get<string>('DB_PASSWORD'),
                 database: configService.get<string>('DB_DATABASE'),
