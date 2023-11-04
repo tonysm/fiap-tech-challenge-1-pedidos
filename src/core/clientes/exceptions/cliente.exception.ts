@@ -13,7 +13,7 @@ export class DuplicidadeDeCpf extends ClienteException {
         super({
             statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
             error: 'Ocorreu um erro.',
-            message: ['CPF já cadastrado'],
+            message: ['Já existe um cadastro para o CPF informado'],
         }, HttpStatus.UNPROCESSABLE_ENTITY)
     }
 }
