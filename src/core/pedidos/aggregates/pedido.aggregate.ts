@@ -1,10 +1,18 @@
-import { Cliente } from "src/core/clientes/entities/cliente.entity";
-import { ItemVO } from "../vo/item.vo";
-import { Pedido, Status, StatusPagamento } from "../entities/pedido.entity";
-import { IdentifiableObject } from "src/core/bases/identifiable.object";
-import { NaoPodeAlterarPedido, PedidoEmEtapaInvalidaParaRealizarOperacao, PedidoSemItens, StatusDoPagamentoInvalidoParaIniciarPreparacao, StatusInvalidoParaFinalizado, StatusInvalidoParaIniciarPreparacao, StatusInvalidoParaPronto } from "../exceptions/pedido.exception";
-import { PagamentoGateway } from "src/core/pagamentos/pagamento.gateway";
-import { ConfirmaPedidoDto } from "src/externals/apis/dto/confirma-pedido.dto";
+import { Cliente } from 'src/core/clientes/entities/cliente.entity';
+import { ItemVO } from '../vo/item.vo';
+import { Pedido, Status, StatusPagamento } from '../entities/pedido.entity';
+import { IdentifiableObject } from 'src/core/bases/identifiable.object';
+import {
+  NaoPodeAlterarPedido,
+  PedidoEmEtapaInvalidaParaRealizarOperacao,
+  PedidoSemItens,
+  StatusDoPagamentoInvalidoParaIniciarPreparacao,
+  StatusInvalidoParaFinalizado,
+  StatusInvalidoParaIniciarPreparacao,
+  StatusInvalidoParaPronto,
+} from '../exceptions/pedido.exception';
+import { PagamentoGateway } from 'src/core/pagamentos/pagamento.gateway';
+import { ConfirmaPedidoDto } from 'src/externals/apis/dto/confirma-pedido.dto';
 
 export class PedidoAggregate extends IdentifiableObject {
   constructor(
@@ -12,49 +20,49 @@ export class PedidoAggregate extends IdentifiableObject {
     private statusPagamento: StatusPagamento,
     private dataConfirmacaoPagamento: Date,
     private itens: ItemVO[],
-    private cliente?: Cliente
+    private cliente?: Cliente,
   ) {
-    super()
+    super();
   }
 
   iniciarPreparacaoDoPedido() {
     if (this.status != Status.RECEBIDO) {
-      throw new StatusInvalidoParaIniciarPreparacao
+      throw new StatusInvalidoParaIniciarPreparacao();
     }
 
-    if(this.statusPagamento != StatusPagamento.SUCESSO) {
-      throw new StatusDoPagamentoInvalidoParaIniciarPreparacao
+    if (this.statusPagamento != StatusPagamento.SUCESSO) {
+      throw new StatusDoPagamentoInvalidoParaIniciarPreparacao();
     }
 
-    this.status = Status.EM_PREPARACAO
+    this.status = Status.EM_PREPARACAO;
   }
 
   encerrarPreparacaoDoPedido() {
     if (this.status != Status.EM_PREPARACAO) {
-      throw new StatusInvalidoParaPronto
+      throw new StatusInvalidoParaPronto();
     }
 
-    this.status = Status.PRONTO
+    this.status = Status.PRONTO;
   }
 
   finalizarPedido() {
     if (this.status != Status.PRONTO) {
-      throw new StatusInvalidoParaFinalizado
+      throw new StatusInvalidoParaFinalizado();
     }
 
-    this.status = Status.FINALIZADO
+    this.status = Status.FINALIZADO;
   }
 
   adicionarItem(item: ItemVO) {
-    if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido;
+    if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido();
 
     this.itens.push(item);
   }
 
   atualizaItem(itemId: number, quantidade: number, observacao: string) {
-    if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido;
+    if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido();
 
-    this.itens = this.itens.map(item => {
+    this.itens = this.itens.map((item) => {
       if (item.id != itemId) return item;
 
       return new ItemVO(
@@ -64,47 +72,49 @@ export class PedidoAggregate extends IdentifiableObject {
         item.precoUnitario,
         item.id,
       );
-    })
+    });
   }
 
   removeItem(itemId: number) {
-    if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido;
+    if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido();
 
-    this.itens = this.itens.filter((item) => item.id != itemId)
+    this.itens = this.itens.filter((item) => item.id != itemId);
   }
 
   confirmaPagamento(input: ConfirmaPedidoDto) {
-    if (this.statusPagamento === StatusPagamento.SUCESSO) throw new NaoPodeAlterarPedido;
-    if (this.status !== Status.RECEBIDO) throw new PedidoEmEtapaInvalidaParaRealizarOperacao;
+    if (this.statusPagamento === StatusPagamento.SUCESSO)
+      throw new NaoPodeAlterarPedido();
 
-    
-    this.statusPagamento = input.statusPagamento
-    this.dataConfirmacaoPagamento = new Date()
+    if (this.status !== Status.RECEBIDO)
+      throw new PedidoEmEtapaInvalidaParaRealizarOperacao();
+
+    this.statusPagamento = input.statusPagamento;
+    this.dataConfirmacaoPagamento = new Date();
   }
 
   checkout(pagamentos: PagamentoGateway) {
-    if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido;
-    if (this.itens.length === 0) throw new PedidoSemItens;
+    if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido();
+    if (this.itens.length === 0) throw new PedidoSemItens();
 
     this.status = Status.RECEBIDO;
 
-    return pagamentos.checkout(this)
+    return pagamentos.checkout(this);
   }
 
   getStatusPagamento() {
-    return this.statusPagamento
+    return this.statusPagamento;
   }
 
   toEntity(): Pedido {
-    const pedido = new Pedido()
+    const pedido = new Pedido();
 
-    pedido.id = this.id
-    pedido.cliente = this.cliente
-    pedido.itens = this.itens.map(item => item.toEntity());
-    pedido.status = this.status
-    pedido.statusPagamento = this.statusPagamento
-    pedido.dataConfirmacaoPagamento = this.dataConfirmacaoPagamento
+    pedido.id = this.id;
+    pedido.cliente = this.cliente;
+    pedido.itens = this.itens.map((item) => item.toEntity());
+    pedido.status = this.status;
+    pedido.statusPagamento = this.statusPagamento;
+    pedido.dataConfirmacaoPagamento = this.dataConfirmacaoPagamento;
 
-    return pedido
+    return pedido;
   }
 }

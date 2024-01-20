@@ -18,22 +18,32 @@ import { PedidosController } from './controller/pedidos.controller';
 import { PedidosControllerInterface } from './controller/pedidos.controller.interface';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Pedido, Item]), ProdutosModule, ClientesModule],
-  controllers: [PedidosAPI, PedidoItensAPI, PedidosConfirmadosAPI, FilaCozinhaAPI],
+  imports: [
+    TypeOrmModule.forFeature([Pedido, Item]),
+    ProdutosModule,
+    ClientesModule,
+  ],
+  controllers: [
+    PedidosAPI,
+    PedidoItensAPI,
+    PedidosConfirmadosAPI,
+    FilaCozinhaAPI,
+  ],
   providers: [
     PedidoAggregateFactory,
     PedidosService,
     {
       provide: PedidosServiceInterface,
-      useClass: PedidosService
+      useClass: PedidosService,
     },
     ProdutosService,
     PedidosRepository,
     PagamentoFakeGateway,
-    PedidosController, {
+    PedidosController,
+    {
       provide: PedidosControllerInterface,
-      useClass: PedidosController
-    }
+      useClass: PedidosController,
+    },
   ],
   exports: [PagamentoFakeGateway, PedidosRepository],
 })

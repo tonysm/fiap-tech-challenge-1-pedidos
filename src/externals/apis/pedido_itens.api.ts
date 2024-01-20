@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Param, Delete, Patch, Inject } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Patch,
+  Inject,
+} from '@nestjs/common';
 
 import { CreatePedidoItemDto } from './dto/create-pedido-item.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -20,20 +28,30 @@ export class PedidoItensAPI {
 
   @ApiOperation({ summary: 'Adiciona item ao pedido' })
   @Post()
-  async create(@Param('pedido') pedido: number, @Body() input: CreatePedidoItemDto) {
+  async create(
+    @Param('pedido') pedido: number,
+    @Body() input: CreatePedidoItemDto,
+  ) {
     const produto = await this.findProdutoOrFail(input.produtoId);
 
-    return this.pedidos.addItem(pedido, new ItemVO(
-      input.quantidade,
-      produto,
-      input.observacao,
-      produto.precoUnitario
-    ));
+    return this.pedidos.addItem(
+      pedido,
+      new ItemVO(
+        input.quantidade,
+        produto,
+        input.observacao,
+        produto.precoUnitario,
+      ),
+    );
   }
 
   @ApiOperation({ summary: 'Atualiza item do pedido' })
   @Patch(':id')
-  async update(@Param('pedido') pedidoId: number, @Param('id') itemId: number, @Body() input: UpdatePedidoItemDto) {
+  async update(
+    @Param('pedido') pedidoId: number,
+    @Param('id') itemId: number,
+    @Body() input: UpdatePedidoItemDto,
+  ) {
     return this.pedidos.updateItem(pedidoId, itemId, input);
   }
 
@@ -44,9 +62,9 @@ export class PedidoItensAPI {
   }
 
   private async findProdutoOrFail(id: number) {
-    const produto = await this.produtos.findOne(id)
+    const produto = await this.produtos.findOne(id);
 
-    if ( ! produto) throw new ProdutoNaoEncontrado
+    if (!produto) throw new ProdutoNaoEncontrado();
 
     return produto;
   }
