@@ -9,23 +9,25 @@ import { ClientesModule } from './core/clientes/clientes.module';
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
-        imports: [ConfigModule],
-        useFactory(configService: ConfigService) {
-            return {
-                type: 'mysql',
-                host: '/cloudsql/' + configService.get<string>('DB_HOST'),
-                extra: {
-                  socketPath: '/cloudsql/' + configService.get<string>('DB_HOST'),
-                },
-                port: 3306,
-                username: configService.get<string>('DB_USERNAME'),
-                password: configService.get<string>('DB_PASSWORD'),
-                database: configService.get<string>('DB_DATABASE'),
-                entities: [__dirname + '/core/**/*.entity{.ts,.js}'],
-                synchronize: true
-            }
-        },
-        inject: [ConfigService],
+      imports: [ConfigModule],
+      useFactory(configService: ConfigService) {
+        return {
+          type: 'mysql',
+          host: configService.get<string>('DB_HOST'),
+          extra: configService.get<boolean>('DB_USE_CLOUDSQL_SOCKET', false)
+            ? {
+                socketPath: '/cloudsql/' + configService.get<string>('DB_HOST'),
+              }
+            : null,
+          port: 3306,
+          username: configService.get<string>('DB_USERNAME'),
+          password: configService.get<string>('DB_PASSWORD'),
+          database: configService.get<string>('DB_DATABASE'),
+          entities: [__dirname + '/core/**/*.entity{.ts,.js}'],
+          synchronize: true,
+        };
+      },
+      inject: [ConfigService],
     }),
     PedidosModule,
     ProdutosModule,
