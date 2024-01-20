@@ -9,9 +9,6 @@ import { ClientesModule } from '../clientes/clientes.module';
 import { PedidoAggregateFactory } from './aggregates/pedido.aggregate.factory';
 import { PedidoItensAPI } from 'src/externals/apis/pedido_itens.api';
 import { ProdutosService } from '../produtos/produtos.service';
-import { PagamentoFakeGateway } from '../../externals/gateways/pagmento-fake.gateway';
-import { PedidosConfirmadosAPI } from 'src/externals/apis/pedidos_confirmados.api';
-import { FilaCozinhaAPI } from 'src/externals/apis/fila_cozinha_api';
 import { PedidosRepository } from 'src/externals/repositories/pedidos.repository';
 import { PedidosServiceInterface } from './pedido.service.interface';
 import { PedidosController } from './controller/pedidos.controller';
@@ -26,8 +23,6 @@ import { PedidosControllerInterface } from './controller/pedidos.controller.inte
   controllers: [
     PedidosAPI,
     PedidoItensAPI,
-    PedidosConfirmadosAPI,
-    FilaCozinhaAPI,
   ],
   providers: [
     PedidoAggregateFactory,
@@ -38,13 +33,12 @@ import { PedidosControllerInterface } from './controller/pedidos.controller.inte
     },
     ProdutosService,
     PedidosRepository,
-    PagamentoFakeGateway,
     PedidosController,
     {
       provide: PedidosControllerInterface,
       useClass: PedidosController,
     },
   ],
-  exports: [PagamentoFakeGateway, PedidosRepository],
+  exports: [PedidosRepository],
 })
 export class PedidosModule {}

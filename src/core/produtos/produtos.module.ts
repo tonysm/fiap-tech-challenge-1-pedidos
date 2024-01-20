@@ -11,13 +11,19 @@ import { ProdutosController } from './controller/produtos.controller';
 @Module({
   imports: [TypeOrmModule.forFeature([Produto])],
   controllers: [ProdutosAPI],
-  providers: [ProdutosRepository, ProdutosService, {
-    provide: ProdutosServiceInterface,
-    useClass: ProdutosService
-  }, ProdutosController, {
-    provide: ProdutosControllerInterface,
-    useClass: ProdutosController
-  }],
-  exports: [ProdutosRepository]
+  providers: [
+    ProdutosRepository,
+    ProdutosService,
+    {
+      provide: ProdutosServiceInterface,
+      useClass: ProdutosService,
+    },
+    ProdutosController,
+    {
+      provide: ProdutosControllerInterface,
+      useClass: ProdutosController,
+    },
+  ],
+  exports: [ProdutosRepository],
 })
-export class ProdutosModule {}
+export class ProdutosModule { }

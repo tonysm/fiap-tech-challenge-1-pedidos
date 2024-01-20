@@ -1,15 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CreatePedidoDto } from 'src/externals/apis/dto/create-pedido.dto';
-import { Status } from './entities/pedido.entity';
 import { PedidoAggregateFactory } from './aggregates/pedido.aggregate.factory';
-import { StatusInvalidoException } from './exceptions/pedido.exception';
 import { ItemVO } from './vo/item.vo';
 import { UpdatePedidoItemDto } from 'src/externals/apis/dto/update-pedido-item.dto';
-import { PagamentoGateway } from '../pagamentos/pagamento.gateway';
 import { PedidosRepositoryInterface } from './repositories/pedidos.repository';
 import { PedidosRepository } from 'src/externals/repositories/pedidos.repository';
 import { PedidosServiceInterface } from './pedido.service.interface';
-import { ConfirmaPedidoDto } from 'src/externals/apis/dto/confirma-pedido.dto';
 
 @Injectable()
 export class PedidosService implements PedidosServiceInterface {
@@ -21,10 +17,6 @@ export class PedidosService implements PedidosServiceInterface {
 
   findAll() {
     return this.repository.findAll();
-  }
-
-  findAllParaCozinha() {
-    return this.repository.findAllParaCozinha();
   }
 
   findOne(id: number) {
@@ -68,63 +60,5 @@ export class PedidosService implements PedidosServiceInterface {
     this.repository.deleteItem(id);
 
     return aggregate.toEntity();
-  }
-
-  async confirmaPagamento(pedidoId: number, input: ConfirmaPedidoDto) {
-    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId);
-
-    aggregate.confirmaPagamento(input);
-
-    return aggregate.toEntity();
-  }
-
-  async checkout(pedidoId: number, pagamentos: PagamentoGateway) {
-    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId);
-
-    aggregate.checkout(pagamentos);
-
-    return aggregate.toEntity();
-  }
-
-  async atualizaStatusDoPedido(id: number, status: Status) {
-    switch (status) {
-      case Status.EM_PREPARACAO:
-        return this.iniciarPreparacaoDoPedido(id);
-      case Status.PRONTO:
-        return this.encerrarPreparacaoDoPedido(id);
-      case Status.FINALIZADO:
-        return this.finalizarPedido(id);
-      default:
-        throw new StatusInvalidoException();
-    }
-  }
-
-  private async iniciarPreparacaoDoPedido(id: number) {
-    const aggregate = await this.pedidoAggregateFactory.createFromId(id);
-
-    aggregate.iniciarPreparacaoDoPedido();
-
-    return aggregate.toEntity();
-  }
-
-  private async encerrarPreparacaoDoPedido(id: number) {
-    const aggregate = await this.pedidoAggregateFactory.createFromId(id);
-
-    aggregate.encerrarPreparacaoDoPedido();
-
-    return aggregate.toEntity();
-  }
-
-  private async finalizarPedido(id: number) {
-    const aggregate = await this.pedidoAggregateFactory.createFromId(id);
-
-    aggregate.finalizarPedido();
-
-    return aggregate.toEntity();
-  }
-
-  async statusPagamento(pedidoId: number) {
-    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId);
-    return aggregate.getStatusPagamento();
   }
 }
