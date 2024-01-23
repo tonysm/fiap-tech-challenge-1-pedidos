@@ -85,7 +85,7 @@
         "main.ts"
     ],
     "coverageDirectory": "../coverage",
-    "coverageReporters": ["json", "html"],
+    "coverageReporters": ["html", "lcov"],
     "testEnvironment": "node",
     "moduleNameMapper": {
         "^src/(.*)$": "<rootDir>/$1"
