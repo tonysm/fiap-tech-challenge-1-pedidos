@@ -17,10 +17,10 @@ jobs:
       - name: Compute revision
         id: revision
         run: echo "sha_short=v$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-  
+
       - name: Setup Docker
         uses: docker/setup-buildx-action@v1
-  
+
       - name: Build Docker Image
         run: docker build -t pedidos-service-tech-challenge:${{ steps.revision.outputs.sha_short }} .
 
@@ -50,6 +50,10 @@ jobs:
             DB_DATABASE=${{vars.DEPLOY_DB_DATABASE_SECRET_NAME}}
             DB_USERNAME=${{vars.DEPLOY_DB_USERNAME_SECRET_NAME}}
             DB_PASSWORD=${{vars.DEPLOY_DB_PASSWORD_SECRET_NAME}}
+            PRODUCAO_PROVIDER=api
+            PRODUCAO_API_URL=${{vars.DEPLOY_PRODUCAO_API_URL}}
+            PAGAMENTOS_PROVIDER=api
+            PAGAMENTOS_API_URL=${{vars.DEPLOY_PAGAMENTOS_API_URL}}
           service: ${{vars.SERVICE_NAME}}
           image: gcr.io/${{vars.PROJECT_ID}}/pedidos-service-tech-challenge:${{ steps.revision.outputs.sha_short }}
           region: ${{vars.DEPLOY_REGION}}

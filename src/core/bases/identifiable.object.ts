@@ -1,5 +1,3 @@
-
-
 export abstract class IdentifiableObject {
-    id: number
+  id: number;
 }

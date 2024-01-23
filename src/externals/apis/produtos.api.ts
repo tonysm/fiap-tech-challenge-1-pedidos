@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, Query, Inject } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpException,
+  HttpStatus,
+  Query,
+  Inject,
+} from '@nestjs/common';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
 import { Categoria } from 'src/core/produtos/entities/produto.entity';
@@ -8,10 +20,9 @@ import { ProdutosControllerInterface } from 'src/core/produtos/controller/produt
 @Controller('produtos')
 @ApiTags('produtos')
 export class ProdutosAPI {
-  
   constructor(
     @Inject(ProdutosControllerInterface)
-    private readonly produtosController: ProdutosControllerInterface
+    private readonly produtosController: ProdutosControllerInterface,
   ) {}
 
   @ApiOperation({ summary: 'Cria um novo produto' })
@@ -22,7 +33,12 @@ export class ProdutosAPI {
 
   @ApiOperation({ summary: 'Busca produtos por categoria' })
   @Get()
-  @ApiQuery({ name: 'categoria', required: false, type: 'enum', enum: Categoria })
+  @ApiQuery({
+    name: 'categoria',
+    required: false,
+    type: 'enum',
+    enum: Categoria,
+  })
   findAll(@Query('categoria') categoria: Categoria) {
     if (categoria) {
       return this.produtosController.findAllByCategoria(categoria);
@@ -36,9 +52,10 @@ export class ProdutosAPI {
   async findOne(@Param('id') id: string) {
     const produto = await this.produtosController.findOne(+id);
 
-    if (! produto) throw new HttpException('Produto não encontrado', HttpStatus.NOT_FOUND)
+    if (!produto)
+      throw new HttpException('Produto não encontrado', HttpStatus.NOT_FOUND);
 
-    return produto
+    return produto;
   }
 
   @ApiOperation({ summary: 'Atualiza os dados de um produto' })

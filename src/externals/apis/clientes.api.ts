@@ -1,8 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, Inject } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpException,
+  HttpStatus,
+  Inject,
+} from '@nestjs/common';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ClientesServiceInterface } from 'src/core/clientes/clientes.service.interface';
 import { ClientesController } from 'src/core/clientes/controller/clientes.controller';
 import { ClientesControllerInterface } from 'src/core/clientes/controller/clientes.controller.interface';
 
@@ -11,7 +21,7 @@ import { ClientesControllerInterface } from 'src/core/clientes/controller/client
 export class ClientesAPI {
   constructor(
     @Inject(ClientesController)
-    private readonly clientesController: ClientesControllerInterface
+    private readonly clientesController: ClientesControllerInterface,
   ) {}
 
   @ApiOperation({ summary: 'Cria um novo cliente' })
@@ -31,8 +41,8 @@ export class ClientesAPI {
   async findByCpf(@Param('cpf') cpf: string) {
     const cliente = await this.clientesController.findByCpf(cpf);
 
-    if (! cliente) {
-        throw new HttpException("Cliente não encontrado", HttpStatus.NOT_FOUND);
+    if (!cliente) {
+      throw new HttpException('Cliente não encontrado', HttpStatus.NOT_FOUND);
     }
 
     return cliente;
@@ -43,8 +53,8 @@ export class ClientesAPI {
   async findOne(@Param('id') id: string) {
     const cliente = await this.clientesController.findOne(+id);
 
-    if (! cliente) {
-        throw new HttpException("Cliente não encontrado", HttpStatus.NOT_FOUND);
+    if (!cliente) {
+      throw new HttpException('Cliente não encontrado', HttpStatus.NOT_FOUND);
     }
 
     return cliente;
