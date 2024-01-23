@@ -16,7 +16,7 @@ import { ClientesModule } from './core/clientes/clientes.module';
           host: configService.get<string>('DB_HOST'),
           extra: configService.get<boolean>('DB_USE_CLOUDSQL_SOCKET', false)
             ? {
-                socketPath: '/cloudsql/' + configService.get<string>('DB_HOST'),
+                socketPath: configService.get<string>('DB_HOST'),
               }
             : null,
           port: 3306,
