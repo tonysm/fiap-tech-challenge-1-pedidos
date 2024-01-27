@@ -27,6 +27,7 @@ jobs:
             -Dsonar.sources=src/
             -Dsonar.test.exclusions=**/*.spec.ts
             -Dsonar.verbose=true
+            -Dsonar.qualitygate.wait=true
         env:
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
 

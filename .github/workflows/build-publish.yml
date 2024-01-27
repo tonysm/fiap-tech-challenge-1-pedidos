@@ -11,6 +11,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Install dependencies
+        run: npm install
+
+      - name: Test and Coverage
+        run: npm run test:cov
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          args: >
+            -Dsonar.organization=fiap-tech-challenge-soat1
+            -Dsonar.projectKey=fiap-tech-challenge-soat1_fiap-tech-challenge-1-pedidos
+            -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
+            -Dsonar.sources=src/
+            -Dsonar.test.exclusions=**/*.spec.ts
+            -Dsonar.verbose=true
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+
       - name: Compute revision
         id: revision
         run: echo "sha_short=v$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
