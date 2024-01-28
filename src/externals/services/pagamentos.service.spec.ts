@@ -31,7 +31,7 @@ describe('PagamentosService', () => {
 
         expect(usedUrl).toEqual(serviceUrl)
         expect(usedData).toEqual({ pedidoId, valorTotal: valor })
-        expect(usedConfig).toEqual({ timeout: 3_000 })
+        expect(usedConfig).toEqual({ timeout: 3_000, headers: { Accept: 'application/json'}})
     })
 
     it('requests payment calls external service with failure', async () => {

@@ -25,7 +25,7 @@ jobs:
             -Dsonar.projectKey=fiap-tech-challenge-soat1_fiap-tech-challenge-1-pedidos
             -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
             -Dsonar.sources=src/
-            -Dsonar.test.exclusions=**/*.spec.ts
+            -Dsonar.exclusions=**/*.spec.ts
             -Dsonar.verbose=true
             -Dsonar.qualitygate.wait=true
         env:

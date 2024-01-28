@@ -39,8 +39,8 @@ describe('ProducaoService', () => {
         await new ProducaoApiService(serviceUrl, http).iniciarProducao(pedido)
 
         expect(usedUrl).toEqual(serviceUrl)
-        expect(usedData).toEqual({ pedido })
-        expect(usedConfig).toEqual({ timeout: 3_000 })
+        expect(usedData).toEqual(pedido.toPayload())
+        expect(usedConfig).toEqual({ timeout: 3_000, headers: { Accept: 'application/json' }})
     })
 
     it('requests producao calls external service with failure', async () => {

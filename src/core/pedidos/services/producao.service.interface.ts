@@ -28,8 +28,15 @@ export class PedidoProducaoDTO {
 
     constructor(
         public readonly pedidoId: number,
-        public readonly items: ItemProducao[],
+        public readonly itens: ItemProducao[],
     ) {}
+
+    toPayload() {
+        return {
+            num_pedido: this.pedidoId,
+            itens_attributes: this.itens,
+        }
+    }
 }
 
 export interface ProducaoServiceInterface {

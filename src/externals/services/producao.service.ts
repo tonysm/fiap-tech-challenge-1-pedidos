@@ -23,11 +23,12 @@ export class ProducaoApiService implements ProducaoServiceInterface {
       this.http
         .post(
           this.url,
-          {
-            pedido,
-          },
+          pedido.toPayload(),
           {
             timeout: 3_000, // 3 seconds
+            headers: {
+                Accept: 'application/json',
+            },
           },
         )
         .pipe(

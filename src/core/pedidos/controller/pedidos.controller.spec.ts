@@ -431,10 +431,10 @@ describe('PedidosController', () => {
         expect(updated.dataConfirmacaoPagamento).not.toBeNull()
         expect(updated.status).toEqual(Status.EM_PREPARACAO)
         expect(producaoRequest.pedidoId).toEqual(pedido.id)
-        expect(producaoRequest.items.length).toEqual(1)
-        expect(producaoRequest.items[0].nome).toEqual(pedido.itens[0].produto.nome)
-        expect(producaoRequest.items[0].observacao).toEqual(pedido.itens[0].observacao)
-        expect(producaoRequest.items[0].quantidade).toEqual(pedido.itens[0].quantidade)
+        expect(producaoRequest.itens.length).toEqual(1)
+        expect(producaoRequest.itens[0].nome).toEqual(pedido.itens[0].produto.nome)
+        expect(producaoRequest.itens[0].observacao).toEqual(pedido.itens[0].observacao)
+        expect(producaoRequest.itens[0].quantidade).toEqual(pedido.itens[0].quantidade)
     });
 
     it('finalizes the order', async () => {
