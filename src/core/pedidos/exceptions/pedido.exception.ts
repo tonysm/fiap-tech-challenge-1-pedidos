@@ -47,7 +47,7 @@ export class StatusInvalidoException extends PedidoException {
 
 export class PedidoNaoEncontrado extends PedidoException {
   constructor() {
-    super('Pedido não encontrado com o código informado', HttpStatus.NOT_FOUND);
+    super('Pedido não encontrado', HttpStatus.NOT_FOUND);
   }
 }
 
