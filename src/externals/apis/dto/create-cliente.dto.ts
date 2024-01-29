@@ -2,8 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
 import { IsEmail, IsString } from "class-validator";
 import { cpf } from "cpf-cnpj-validator";
-import { CpfValido } from "src/core/clientes/rules/cpf-valido.rule";
-
+import { CpfValido } from "src/core/clientes/rules/cpf-valido.validator";
 export class CreateClienteDto {
     @IsString()
     @ApiProperty({ example: 'João Santos', description: 'O nome do cliente'})
