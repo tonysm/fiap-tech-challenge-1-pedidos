@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@google-cloud/pubsub": "^4.3.2",
     "@nestjs/axios": "^3.0.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.2",
@@ -74,21 +75,24 @@
       "**/*.(t|j)s"
     ],
     "coveragePathIgnorePatterns": [
-        "interfaces",
-        ".spec.ts",
-        ".interface.ts",
-        ".module.ts",
-        ".object.ts",
-        ".dto.ts",
-        ".validator.ts",
-        ".exception.ts",
-        "main.ts"
+      "interfaces",
+      ".spec.ts",
+      ".interface.ts",
+      ".module.ts",
+      ".object.ts",
+      ".dto.ts",
+      ".validator.ts",
+      ".exception.ts",
+      "main.ts"
     ],
     "coverageDirectory": "../coverage",
-    "coverageReporters": ["html", "lcov"],
+    "coverageReporters": [
+      "html",
+      "lcov"
+    ],
     "testEnvironment": "node",
     "moduleNameMapper": {
-        "^src/(.*)$": "<rootDir>/$1"
+      "^src/(.*)$": "<rootDir>/$1"
     }
   }
 }

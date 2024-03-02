@@ -4,6 +4,8 @@ import { PedidosModule } from './core/pedidos/pedidos.module';
 import { ProdutosModule } from './core/produtos/produtos.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientesModule } from './core/clientes/clientes.module';
+import { ConfirmarPagamentoChannel } from './externals/channels/confirmar.pagamento.channel';
+import { PubSubService } from './externals/channels/pubsub.service';
 
 @Module({
   imports: [
@@ -14,11 +16,11 @@ import { ClientesModule } from './core/clientes/clientes.module';
         return {
           type: 'mysql',
           host: configService.get<string>('DB_HOST'),
-          extra: configService.get<boolean>('DB_USE_CLOUDSQL_SOCKET', false)
-            ? {
-                socketPath: configService.get<string>('DB_HOST'),
-              }
-            : null,
+          // extra: configService.get<boolean>('DB_USE_CLOUDSQL_SOCKET', false)
+          //   ? {
+          //       socketPath: configService.get<string>('DB_HOST'),
+          //     }
+          //   : null,
           port: 3306,
           username: configService.get<string>('DB_USERNAME'),
           password: configService.get<string>('DB_PASSWORD'),
@@ -31,7 +33,7 @@ import { ClientesModule } from './core/clientes/clientes.module';
     }),
     PedidosModule,
     ProdutosModule,
-    ClientesModule,
+    ClientesModule
   ],
   controllers: [],
   providers: [],

@@ -21,6 +21,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PedidosFinalizadosAPI } from 'src/externals/apis/pedidos_finalizados.api';
 import { HttpModule, HttpService } from '@nestjs/axios';
 import { PedidoPagamentosAPI } from 'src/externals/apis/pedido_pagamentos.api';
+import { PubSubService } from 'src/externals/channels/pubsub.service';
+import { ConfirmarPagamentoChannel } from 'src/externals/channels/confirmar.pagamento.channel';
+import { SolicitarPagamentoChannel } from 'src/externals/channels/solicitar.pagamento.channel';
 
 @Module({
   imports: [
@@ -28,7 +31,7 @@ import { PedidoPagamentosAPI } from 'src/externals/apis/pedido_pagamentos.api';
     ProdutosModule,
     ClientesModule,
     ConfigModule,
-    HttpModule,
+    HttpModule
   ],
   controllers: [
     PedidosAPI,
@@ -81,6 +84,9 @@ import { PedidoPagamentosAPI } from 'src/externals/apis/pedido_pagamentos.api';
         },
         inject: [ConfigService, HttpService],
     },
+    PubSubService,
+    ConfirmarPagamentoChannel,
+    SolicitarPagamentoChannel
   ],
   exports: [PedidosRepository],
 })
