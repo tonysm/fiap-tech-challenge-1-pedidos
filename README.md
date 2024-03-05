@@ -167,7 +167,7 @@ Após isso, a aplicação irá inicializar. Estamos contando que o deployment se
 
 ```bash
 minikube ip
-192.168.49.2 # exemplo
+192.168.49.2 #  exemplo
 ```
 
 Nesse exemplo, é só acessar: http://192.168.49.2:30001, mas o seu IP pode ser diferente.
