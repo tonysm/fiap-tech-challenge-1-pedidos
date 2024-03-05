@@ -1,15 +1,21 @@
 import { PubSub, Subscription, Topic } from "@google-cloud/pubsub" 
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class PubSubService {
     private pubSubClient: PubSub;
 
-    constructor() {
+    constructor(
+        @Inject(ConfigService)
+        config: ConfigService
+    ) {
+        console.log(`project-id ${config.getOrThrow("GCP_PROJECT_ID")}`)
         this.pubSubClient = new PubSub({
-            "projectId": "fiap-tech-challenge-store",
-            "emulatorMode": true
+            "projectId": config.getOrThrow("GCP_PROJECT_ID")
         })
+
+        console.log("Is emulator: " + this.pubSubClient.isEmulator)
     }
 
     async publishMessage(topicName: string, data: any): Promise<void> {
@@ -18,9 +24,9 @@ export class PubSubService {
         
         try {
             await topic.publish(dataBuffer)
-            console.log(`Mensagem publicada no topico ${topicName}`)
+            console.log(`Message published on ${topicName}`)
         } catch (error) {
-            console.error("Erro ao publicar mensagem no PubSub:", error)
+            console.error(`Error publishing on ${topic.name}:`, error)
         }
     }
 
@@ -28,13 +34,9 @@ export class PubSubService {
         const topic = await this.getTopic(topicName)
         const subscription = await this.getSubscription(topic, subscriptionName)
 
-        // if(!subscription.isOpen) {
-        //     subscription.open()
-        // }
-
         subscription.on("message", (message) => {
             const data = message.data.toString()
-            console.log(data)
+            console.log(`Menssage received on ${subscription.name}: ${message}`)
             callback(data)
             message.ack()
         })

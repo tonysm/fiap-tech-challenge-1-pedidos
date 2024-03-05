@@ -13,7 +13,6 @@ services:
       - 3000:3000
     environment:
       - PUBSUB_EMULATOR_HOST=pubsub:8085
-      # - GOOGLE_APPLICATION_CREDENTIALS=FILENAME.json
     networks:
       - fiap
     depends_on:
@@ -48,7 +47,8 @@ services:
       - "8085:8085"
 
   pagamentos-db:
-    image: firebase-emulator:2.2
+    # image: firebase-emulator:2.2
+    image: pmoon1993/firebase-emulator:2.2
     command: firebase emulators:start --project fiap-tech-challenge-store
     networks:
       - fiap
