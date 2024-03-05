@@ -11,6 +11,8 @@ services:
     command: bash -c "npm ci && npm run start:dev"
     ports:
       - 3000:3000
+    environment:
+      - PUBSUB_EMULATOR_HOST=pubsub:8085
     networks:
       - fiap
     depends_on:
@@ -34,6 +36,25 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}"]
       retries: 3
       timeout: 5s
+
+  pubsub: 
+    image: gcr.io/google.com/cloudsdktool/google-cloud-cli:latest
+    container_name: pubsub
+    command: bash -c "gcloud beta emulators pubsub start --project=fiap-tech-challenge-store --host-port='0.0.0.0:8085'"
+    networks:
+      - fiap
+    ports:
+      - "8085:8085"
+
+  pagamentos-db:
+    # image: firebase-emulator:2.2
+    image: pmoon1993/firebase-emulator:2.2
+    command: firebase emulators:start --project fiap-tech-challenge-store
+    networks:
+      - fiap
+    ports:
+      - "4000:4000"
+      - "8090:8090" 
 
 networks:
   fiap:

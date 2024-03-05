@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString } from "class-validator";
+import { IsNumber, IsString } from "class-validator";
 
 export enum ResultadoPagamento {
     SUCESSO = 'SUCESSO',
@@ -10,4 +10,5 @@ export class ConfirmaPagamentoDoPedidoDto {
   @IsString()
   @ApiProperty({ example: ResultadoPagamento.SUCESSO, description: 'Resultado do pagamento', enum: ResultadoPagamento })
   readonly resultadoPagamento: ResultadoPagamento;
+  readonly pedido: number;
 }

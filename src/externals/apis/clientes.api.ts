@@ -15,13 +15,14 @@ import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ClientesController } from 'src/core/clientes/controller/clientes.controller';
 import { ClientesControllerInterface } from 'src/core/clientes/controller/clientes.controller.interface';
+import { PubSubService } from '../channels/pubsub.service';
 
 @Controller('clientes')
 @ApiTags('clientes')
 export class ClientesAPI {
   constructor(
     @Inject(ClientesController)
-    private readonly clientesController: ClientesControllerInterface,
+    private readonly clientesController: ClientesControllerInterface
   ) {}
 
   @ApiOperation({ summary: 'Cria um novo cliente' })

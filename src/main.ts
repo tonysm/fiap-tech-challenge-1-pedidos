@@ -3,6 +3,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { HttpStatus, ValidationPipe } from '@nestjs/common';
 import { useContainer } from 'class-validator';
+import { ConfirmarPagamentoChannel } from './externals/channels/confirmar.pagamento.channel';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,6 +22,9 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  const confirmarPagamentoChannel = app.get(ConfirmarPagamentoChannel)
+  await confirmarPagamentoChannel.registerMessageConsumer()
 
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
