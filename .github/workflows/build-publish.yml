@@ -67,6 +67,7 @@ jobs:
             PAGAMENTOS_PROVIDER=api
             PAGAMENTOS_API_URL=${{vars.DEPLOY_PAGAMENTOS_API_URL}}
             DB_USE_CLOUDSQL_SOCKET=true
+            GCP_PROJECT_ID=${{vars.PROJECT_ID}}
           secrets: |
             DB_HOST=${{vars.DEPLOY_DB_HOST_SECRET_NAME}}
             DB_DATABASE=${{vars.DEPLOY_DB_DATABASE_SECRET_NAME}}
