@@ -1,4 +1,6 @@
-import { Pedido } from "../entities/pedido.entity";
+import { Inject, Injectable } from "@nestjs/common";
+import { PubSubService } from "./pubsub.service";
+import { Pedido } from "src/core/pedidos/entities/pedido.entity";
 
 export class ItemProducao {
     static fromItensDoPedido(pedido: Pedido) {
@@ -39,8 +41,14 @@ export class PedidoProducaoDTO {
     }
 }
 
-export interface ProducaoServiceInterface {
-    iniciarProducao(pedidoProducaoDTO: PedidoProducaoDTO);
-}
+@Injectable()
+export class PrepararPedidoChannel {
+    constructor(
+        @Inject(PubSubService)
+        private readonly pubSubService: PubSubService
+    ) {}
 
-export const ProducaoServiceInterface = Symbol('ProducaoServiceInterface');
+    prepararPedido(pedido: PedidoProducaoDTO) {
+        this.pubSubService.publishMessage("solicitar-preparo-topic", pedido.toPayload())
+    }
+}

@@ -15,7 +15,7 @@ describe('PedidoItensAPI', () => {
     let api: PedidoItensAPI
 
     beforeEach(() => {
-        controller = new PedidosController(null, null, null, null)
+        controller = new PedidosController(null, null)
         service = new ProdutosService(null)
         api = new PedidoItensAPI(controller, service)
     })
