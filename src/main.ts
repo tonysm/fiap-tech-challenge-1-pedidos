@@ -4,12 +4,10 @@ import { AppModule } from './app.module';
 import { HttpStatus, ValidationPipe } from '@nestjs/common';
 import { useContainer } from 'class-validator';
 import { ConfirmarPagamentoChannel } from './externals/channels/confirmar.pagamento.channel';
-import { FinalizarPedidoChannel } from './externals/channels/finalizar.pedido.channel';
 
 async function bootstrapChannels(app) {
   const channels = [
     app.get(ConfirmarPagamentoChannel),
-    app.get(FinalizarPedidoChannel),
   ];
 
   await Promise.all(channels.map(channel => channel.registerMessageConsumer()));

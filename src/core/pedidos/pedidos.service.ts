@@ -8,10 +8,8 @@ import { PedidosRepository } from 'src/externals/repositories/pedidos.repository
 import { PedidosServiceInterface } from './pedido.service.interface';
 import { NaoPodeSolicitarPagamento } from './exceptions/pedido.exception';
 import { SolicitarPagamentoChannel } from 'src/externals/channels/solicitar.pagamento.channel';
-import {
-  PedidoProducaoDTO,
-  PrepararPedidoChannel,
-} from 'src/externals/channels/preparar.pedido.channel';
+import { ProducaoService } from 'src/externals/services/producao.service';
+import { PedidoProducaoDTO, ProducaoServiceInterface } from './services/producao.service.interface';
 
 @Injectable()
 export class PedidosService implements PedidosServiceInterface {
@@ -21,8 +19,8 @@ export class PedidosService implements PedidosServiceInterface {
     private readonly repository: PedidosRepositoryInterface,
     @Inject(SolicitarPagamentoChannel)
     private readonly solicitarPagamentoChannel: SolicitarPagamentoChannel,
-    @Inject(PrepararPedidoChannel)
-    private readonly prepararPedidoChannel: PrepararPedidoChannel,
+    @Inject(ProducaoService)
+    private readonly producao: ProducaoServiceInterface,
   ) {}
 
   findAll() {
@@ -102,9 +100,7 @@ export class PedidosService implements PedidosServiceInterface {
     const entity = aggregate.toEntity();
 
     if (pagoComSucesso) {
-      this.prepararPedidoChannel.prepararPedido(
-        PedidoProducaoDTO.fromEntity(entity),
-      );
+      this.producao.iniciarProducao(PedidoProducaoDTO.fromEntity(entity));
     }
 
     this.repository.save(entity);

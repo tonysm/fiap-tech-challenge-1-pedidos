@@ -1,9 +1,7 @@
 import { PedidosRepository } from "src/externals/repositories/pedidos.repository";
 import { PedidoAggregateFactory } from "./aggregates/pedido.aggregate.factory";
 import { SolicitarPagamentoChannel } from "src/externals/channels/solicitar.pagamento.channel";
-import { PrepararPedidoChannel } from "src/externals/channels/preparar.pedido.channel";
 import { PedidosService } from "./pedidos.service";
-import { all } from "axios";
 import { Pedido, Status, StatusPagamento } from "./entities/pedido.entity";
 import { PedidoAggregate } from "./aggregates/pedido.aggregate";
 import { CreatePedidoDto } from "src/externals/apis/dto/create-pedido.dto";
@@ -11,12 +9,13 @@ import { ItemVO } from "./vo/item.vo";
 import { Produto } from "../produtos/entities/produto.entity";
 import { Item } from "./entities/item.entity";
 import { UpdatePedidoItemDto } from "src/externals/apis/dto/update-pedido-item.dto";
+import { ProducaoService } from "src/externals/services/producao.service";
 
 describe('PedidosService', () => {
     let factory: PedidoAggregateFactory;
     let repository: PedidosRepository;
     let paymentRequestChannel: SolicitarPagamentoChannel;
-    let requestPreparation: PrepararPedidoChannel;
+    let producaoService: ProducaoService;
     let service: PedidosService;
 
     beforeEach(() => {
@@ -24,7 +23,7 @@ describe('PedidosService', () => {
             factory = new PedidoAggregateFactory(null, null),
             repository = new PedidosRepository(null, null),
             paymentRequestChannel = new SolicitarPagamentoChannel(null),
-            requestPreparation = new PrepararPedidoChannel(null),
+            producaoService = new ProducaoService(),
         );
     });
 
@@ -265,7 +264,7 @@ describe('PedidosService', () => {
             return entity;
         });
 
-        jest.spyOn(requestPreparation, 'prepararPedido').mockImplementation(async () => null);
+        jest.spyOn(producaoService, 'iniciarProducao').mockImplementation(async () => null);
 
         const updated = await service.confirmarPagamento(pedido.id, true);
 

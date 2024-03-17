@@ -8,22 +8,27 @@ import { ClientesRepository } from 'src/externals/repositories/clientes.reposito
 import { ClientesServiceInterface } from './clientes.service.interface';
 import { ClientesController } from './controller/clientes.controller';
 import { ClientesControllerInterface } from './controller/clientes.controller.interface';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PedidosService } from '../pedidos/pedidos.service';
 import { PedidosServiceInterface } from '../pedidos/pedido.service.interface';
 import { Pedido } from '../pedidos/entities/pedido.entity';
 import { ConfirmarPagamentoChannel } from 'src/externals/channels/confirmar.pagamento.channel';
 import { SolicitarPagamentoChannel } from 'src/externals/channels/solicitar.pagamento.channel';
 import { PubSubService } from 'src/externals/channels/pubsub.service';
-import { ConfigModule } from '@nestjs/config';
 import { PedidoAggregateFactory } from '../pedidos/aggregates/pedido.aggregate.factory';
 import { PedidosRepository } from 'src/externals/repositories/pedidos.repository';
 import { PedidosRepositoryInterface } from '../pedidos/repositories/pedidos.repository';
 import { Item } from '../pedidos/entities/item.entity';
-import { PrepararPedidoChannel } from 'src/externals/channels/preparar.pedido.channel';
-import { FinalizarPedidoChannel } from 'src/externals/channels/finalizar.pedido.channel';
+import { ProducaoServiceInterface } from '../pedidos/services/producao.service.interface';
+import { ProducaoApiService, ProducaoService } from 'src/externals/services/producao.service';
+import { HttpModule, HttpService } from '@nestjs/axios';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Cliente, Pedido, Item]), ConfigModule],
+  imports: [
+    TypeOrmModule.forFeature([Cliente, Pedido, Item]),
+    ConfigModule,
+    HttpModule,
+  ],
   controllers: [ClientesAPI],
   providers: [
     ClientesRepository,
@@ -46,12 +51,25 @@ import { FinalizarPedidoChannel } from 'src/externals/channels/finalizar.pedido.
       provide: PedidosRepositoryInterface,
       useClass: PedidosRepository,
     },
+    {
+        provide: ProducaoServiceInterface,
+        useClass: ProducaoService,
+    },
+    {
+        provide: ProducaoService,
+        useFactory(config: ConfigService, http: HttpService) {
+            if (config.getOrThrow<string>('PRODUCAO_PROVIDER') === 'fake') {
+                return new ProducaoService();
+            }
+
+            return new ProducaoApiService(config.getOrThrow<string>('PRODUCAO_API_URL'), http);
+        },
+        inject: [ConfigService, HttpService],
+    },
     PedidoAggregateFactory,
     PubSubService,
     ConfirmarPagamentoChannel,
     SolicitarPagamentoChannel,
-    PrepararPedidoChannel,
-    FinalizarPedidoChannel,
     PedidosService,
     {
       provide: PedidosServiceInterface,
