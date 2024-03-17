@@ -13,14 +13,16 @@ import { PedidosRepository } from 'src/externals/repositories/pedidos.repository
 import { PedidosServiceInterface } from './pedido.service.interface';
 import { PedidosController } from './controller/pedidos.controller';
 import { PedidosControllerInterface } from './controller/pedidos.controller.interface';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { HttpModule, HttpService } from '@nestjs/axios';
+import { ConfigModule } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 import { PedidoPagamentosAPI } from 'src/externals/apis/pedido_pagamentos.api';
 import { PubSubService } from 'src/externals/channels/pubsub.service';
 import { ConfirmarPagamentoChannel } from 'src/externals/channels/confirmar.pagamento.channel';
 import { SolicitarPagamentoChannel } from 'src/externals/channels/solicitar.pagamento.channel';
 import { FinalizarPedidoChannel } from 'src/externals/channels/finalizar.pedido.channel';
 import { PrepararPedidoChannel } from 'src/externals/channels/preparar.pedido.channel';
+import { ClientesService } from '../clientes/clientes.service';
+import { ClientesServiceInterface } from '../clientes/clientes.service.interface';
 
 @Module({
   imports: [
@@ -28,13 +30,9 @@ import { PrepararPedidoChannel } from 'src/externals/channels/preparar.pedido.ch
     ProdutosModule,
     ClientesModule,
     ConfigModule,
-    HttpModule
+    HttpModule,
   ],
-  controllers: [
-    PedidosAPI,
-    PedidoItensAPI,
-    PedidoPagamentosAPI,
-  ],
+  controllers: [PedidosAPI, PedidoItensAPI, PedidoPagamentosAPI],
   providers: [
     PedidoAggregateFactory,
     PedidosService,
@@ -48,6 +46,11 @@ import { PrepararPedidoChannel } from 'src/externals/channels/preparar.pedido.ch
     {
       provide: PedidosControllerInterface,
       useClass: PedidosController,
+    },
+    ClientesService,
+    {
+      provide: ClientesServiceInterface,
+      useClass: ClientesService,
     },
     PubSubService,
     ConfirmarPagamentoChannel,

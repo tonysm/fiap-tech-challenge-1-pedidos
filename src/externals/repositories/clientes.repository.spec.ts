@@ -1,204 +1,223 @@
-import { Cliente } from "src/core/clientes/entities/cliente.entity";
-import { ClientesRepositoryInterface } from "src/core/clientes/repositories/clientes.repository"
-import { In, Not, Repository, SelectQueryBuilder } from "typeorm"
-import { ClientesRepository } from "./clientes.repository";
+import { Cliente } from 'src/core/clientes/entities/cliente.entity';
+import { ClientesRepositoryInterface } from 'src/core/clientes/repositories/clientes.repository';
+import { DataSource, In, Not, Repository, SelectQueryBuilder } from 'typeorm';
+import { ClientesRepository } from './clientes.repository';
 
 describe('ClientesRepository', () => {
-    let orm: Repository<Cliente>;
-    let repository: ClientesRepositoryInterface
+  let orm: Repository<Cliente>;
+  let repository: ClientesRepositoryInterface;
+  let dataSource: DataSource;
 
-    beforeEach(() => {
-        orm = new Repository(Cliente, null, null)
-        repository = new ClientesRepository(orm)
-    })
+  beforeEach(() => {
+    orm = new Repository(Cliente, null, null);
+    repository = new ClientesRepository(orm);
+    dataSource = new DataSource({ type: 'sqlite', database: ':memory:' });
+  });
 
-    it('saves', async () => {
-        let savedCliente
-        jest.spyOn(orm, 'save').mockImplementation(async (cliente) => savedCliente = cliente as Cliente)
+  it('saves', async () => {
+    let savedCliente;
+    const cliente = new Cliente();
 
-        let cliente = new Cliente()
-        await repository.save(cliente)
+    jest.spyOn(orm, 'save').mockImplementation(async (givenCliente) => {
+      savedCliente = givenCliente;
+      return Promise.resolve(cliente);
+    });
 
-        expect(savedCliente).toBe(cliente)
-    })
+    await repository.save(cliente);
 
-    it('find all', async () => {
-        let all = [new Cliente]
-        jest.spyOn(orm, 'find').mockImplementation(async () => all)
+    expect(savedCliente).toBe(cliente);
+  });
 
-        let found = await repository.findAll()
+  it('find all', async () => {
+    const all = [new Cliente()];
+    const builder = new SelectQueryBuilder<Cliente>(dataSource, null);
 
-        expect(found).toBe(all)
-    })
+    let usedWhere;
 
-    it('finds by ID', async () => {
-        let cliente = new Cliente
-        cliente.id = 123
+    jest.spyOn(orm, 'createQueryBuilder').mockImplementation(() => builder);
+    jest.spyOn(builder, 'where').mockImplementation((where) => {
+      usedWhere = where;
+      return builder;
+    });
+    jest
+      .spyOn(builder, 'getMany')
+      .mockImplementation(async () => Promise.resolve(all));
 
-        let usedCriteria
-        jest.spyOn(orm, 'findOneBy').mockImplementation(async (criteria) => {
-            usedCriteria = criteria
-            return cliente
-        })
+    const found = await repository.findAll();
 
-        let found = await repository.findById(cliente.id)
+    expect(found).toBe(all);
+    expect(usedWhere).toEqual({ deletado: false });
+  });
 
-        expect(usedCriteria).toEqual({ id: cliente.id })
-        expect(found).toBe(cliente)
-    })
+  it('finds by ID', async () => {
+    const cliente = new Cliente();
+    cliente.id = 123;
 
-    it('finds by CPF', async () => {
-        let cliente = new Cliente
-        cliente.id = 123
-        cliente.cpf = '999.999.999-99'
+    const builder = new SelectQueryBuilder<Cliente>(dataSource, null);
 
-        let query = {
-            table: null,
-            clause: null,
-            bindings: null,
-            withTable(table) {
-                this.table = table
+    let usedWhere;
+    jest.spyOn(orm, 'createQueryBuilder').mockImplementation(() => builder);
+    jest.spyOn(builder, 'where').mockImplementation((where) => {
+      usedWhere = where;
+      return builder;
+    });
+    jest
+      .spyOn(builder, 'getOne')
+      .mockImplementation(async () => Promise.resolve(cliente));
 
-                return this
-            },
-            where(clause, bindings) {
-                this.clause = clause
-                this.bindings = bindings
+    const found = await repository.findById(cliente.id);
 
-                return this
-            },
-            getOne() {
-                return cliente
-            }
-        }
+    expect(found).toBe(cliente);
+    expect(usedWhere).toEqual({
+      deletado: false,
+      id: cliente.id,
+    });
+  });
 
-        jest.spyOn(orm, 'createQueryBuilder').mockImplementation((table) => query.withTable(table) as SelectQueryBuilder<Cliente>)
+  it('finds by CPF', async () => {
+    const cliente = new Cliente();
+    cliente.id = 123;
+    cliente.cpf = '999.999.999-99';
 
-        const found = await repository.findByCpf(cliente.cpf)
+    const builder = new SelectQueryBuilder<Cliente>(dataSource, null);
 
-        expect(found).toBe(cliente)
-        expect(query.table).toEqual('cliente')
-        expect(query.clause).toEqual('cliente.cpf = :cpf')
-        expect(query.bindings).toEqual({ cpf: cliente.cpf })
-    })
+    let usedWhere;
+    jest.spyOn(orm, 'createQueryBuilder').mockImplementation(() => builder);
+    jest.spyOn(builder, 'where').mockImplementation((where) => {
+      usedWhere = where;
+      return builder;
+    });
+    jest
+      .spyOn(builder, 'getOne')
+      .mockImplementation(async () => Promise.resolve(cliente));
 
-    it('finds by CPF with exception', async () => {
-        let cliente = new Cliente
-        cliente.id = 123
-        cliente.cpf = '999.999.999-99'
+    const found = await repository.findByCpf(cliente.cpf);
 
-        let query = {
-            table: null,
-            wheres: [],
-            withTable(table) {
-                this.table = table
+    expect(found).toBe(cliente);
+    expect(usedWhere).toEqual({
+      deletado: false,
+      cpf: cliente.cpf,
+    });
+  });
 
-                return this
-            },
-            where(...clause) {
-                this.wheres.push(clause)
+  it('finds by CPF with exceptions', async () => {
+    const cliente = new Cliente();
+    cliente.id = 123;
+    cliente.cpf = '999.999.999-99';
 
-                return this
-            },
-            getOne() {
-                return cliente
-            }
-        }
+    const builder = new SelectQueryBuilder<Cliente>(dataSource, null);
 
-        jest.spyOn(orm, 'createQueryBuilder').mockImplementation((table) => query.withTable(table) as SelectQueryBuilder<Cliente>)
+    let usedWhere;
+    jest.spyOn(orm, 'createQueryBuilder').mockImplementation(() => builder);
+    jest.spyOn(builder, 'where').mockImplementation((where) => {
+      usedWhere = where;
+      return builder;
+    });
+    jest
+      .spyOn(builder, 'getOne')
+      .mockImplementation(async () => Promise.resolve(cliente));
 
-        const found = await repository.findByCpf(cliente.cpf, [321])
+    const except = [432];
+    const found = await repository.findByCpf(cliente.cpf, except);
 
-        expect(found).toBe(cliente)
-        expect(query.table).toEqual('cliente')
-        expect(query.wheres.length).toEqual(2)
-        expect(query.wheres[0][0]).toEqual('cliente.cpf = :cpf')
-        expect(query.wheres[0][1]).toEqual({ cpf: cliente.cpf })
-        expect(query.wheres[1][0]).toEqual({ id: Not(In([321])) })
-    })
+    expect(found).toBe(cliente);
+    expect(usedWhere).toEqual({
+      deletado: false,
+      cpf: cliente.cpf,
+      id: Not(In(except)),
+    });
+  });
 
-    it('finds by email', async () => {
-        let cliente = new Cliente
-        cliente.id = 123
-        cliente.email = 'jon@example.com'
+  it('finds by email', async () => {
+    const cliente = new Cliente();
+    cliente.id = 123;
+    cliente.email = 'jon@example.com';
 
-        let query = {
-            table: null,
-            clause: null,
-            bindings: null,
-            withTable(table) {
-                this.table = table
+    const builder = new SelectQueryBuilder<Cliente>(dataSource, null);
 
-                return this
-            },
-            where(clause, bindings) {
-                this.clause = clause
-                this.bindings = bindings
+    let usedWhere;
+    jest.spyOn(orm, 'createQueryBuilder').mockImplementation(() => builder);
+    jest.spyOn(builder, 'where').mockImplementation((where) => {
+      usedWhere = where;
+      return builder;
+    });
+    jest
+      .spyOn(builder, 'getOne')
+      .mockImplementation(async () => Promise.resolve(cliente));
 
-                return this
-            },
-            getOne() {
-                return cliente
-            }
-        }
+    const found = await repository.findByEmail(cliente.email);
 
-        jest.spyOn(orm, 'createQueryBuilder').mockImplementation((table) => query.withTable(table) as SelectQueryBuilder<Cliente>)
+    expect(found).toBe(cliente);
+    expect(usedWhere).toEqual({
+      deletado: false,
+      email: cliente.email,
+    });
+  });
 
-        const found = await repository.findByEmail(cliente.email)
+  it('finds by email with exceptions', async () => {
+    const cliente = new Cliente();
+    cliente.id = 123;
+    cliente.email = 'jon@example.com';
 
-        expect(found).toBe(cliente)
-        expect(query.table).toEqual('cliente')
-        expect(query.clause).toEqual('cliente.email = :email')
-        expect(query.bindings).toEqual({ email: cliente.email })
-    })
+    const builder = new SelectQueryBuilder<Cliente>(dataSource, null);
 
-    it('finds by email with exception', async () => {
-        let cliente = new Cliente
-        cliente.id = 123
-        cliente.email = 'jon@example.com'
+    let usedWhere;
+    jest.spyOn(orm, 'createQueryBuilder').mockImplementation(() => builder);
+    jest.spyOn(builder, 'where').mockImplementation((where) => {
+      usedWhere = where;
+      return builder;
+    });
+    jest
+      .spyOn(builder, 'getOne')
+      .mockImplementation(async () => Promise.resolve(cliente));
 
-        let query = {
-            table: null,
-            wheres: [],
-            withTable(table) {
-                this.table = table
+    const except = [432];
+    const found = await repository.findByEmail(cliente.email, except);
 
-                return this
-            },
-            where(...clause) {
-                this.wheres.push(clause)
+    expect(found).toBe(cliente);
+    expect(usedWhere).toEqual({
+      deletado: false,
+      email: cliente.email,
+      id: Not(In(except)),
+    });
+  });
 
-                return this
-            },
-            getOne() {
-                return cliente
-            }
-        }
+  it('deletes by obfuscating', async () => {
+    let cliente = new Cliente(),
+        nome = "original nome",
+        email = "original@example.com";
+    cliente.id = 123;
+    cliente.nome = nome;
+    cliente.email = email;
+    cliente.cpf = "999.999.999-99";
 
-        jest.spyOn(orm, 'createQueryBuilder').mockImplementation((table) => query.withTable(table) as SelectQueryBuilder<Cliente>)
+    const builder = new SelectQueryBuilder<Cliente>(dataSource, null);
 
-        const found = await repository.findByEmail(cliente.email, [321])
+    let usedWhere, deleted;
+    jest.spyOn(orm, 'createQueryBuilder').mockImplementation(() => builder);
+    jest.spyOn(builder, 'where').mockImplementation((where) => {
+      usedWhere = where;
+      return builder;
+    });
+    jest
+      .spyOn(builder, 'getOne')
+      .mockImplementation(async () => Promise.resolve(cliente));
+    jest
+      .spyOn(repository, 'save')
+      .mockImplementation(async (updated) => {
+        deleted = updated;
+        return Promise.resolve(updated);
+      });
 
-        expect(found).toBe(cliente)
-        expect(query.table).toEqual('cliente')
-        expect(query.wheres.length).toEqual(2)
-        expect(query.wheres[0][0]).toEqual('cliente.email = :email')
-        expect(query.wheres[0][1]).toEqual({ email: cliente.email })
-        expect(query.wheres[1][0]).toEqual({ id: Not(In([321])) })
-    })
+    await repository.delete(cliente.id);
 
-    it('deletes', async () => {
-        let cliente = new Cliente
-        cliente.id = 123
-
-        let usedDeleteCriteria
-        jest.spyOn(orm, 'delete').mockImplementation(async (criteria) => {
-            usedDeleteCriteria = criteria
-            return null
-        })
-
-        await repository.delete(cliente.id)
-
-        expect(usedDeleteCriteria).toEqual({ id: cliente.id })
-    })
-})
+    expect(usedWhere).toEqual({
+      deletado: false,
+      id: cliente.id,
+    });
+    expect(deleted.id).toEqual(cliente.id);
+    expect(deleted.nome).not.toEqual(nome);
+    expect(deleted.email).not.toEqual(email);
+    expect(deleted.cpf).toBeNull();
+  });
+});

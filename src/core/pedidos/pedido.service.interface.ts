@@ -13,6 +13,7 @@ export interface PedidosServiceInterface {
   solicitarPagamento(pedidoId: number);
   confirmarPagamento(pedidoId: number, pagoComSucesso: boolean);
   finalizar(pedidoId: number);
+  cancelarPedidosPendentes(clienteId: number);
 }
 
 export const PedidosServiceInterface = Symbol('PedidosServiceInterface');

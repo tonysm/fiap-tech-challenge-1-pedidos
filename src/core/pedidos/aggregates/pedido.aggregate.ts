@@ -17,14 +17,16 @@ export class PedidoAggregate extends IdentifiableObject {
 
   adicionarItem(item: ItemVO) {
     if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido();
-    if (this.statusPagamento === StatusPagamento.PROCESSANDO) throw new NaoPodeAlterarPedido();
+    if (this.statusPagamento === StatusPagamento.PROCESSANDO)
+      throw new NaoPodeAlterarPedido();
 
     this.itens.push(item);
   }
 
   atualizaItem(itemId: number, quantidade: number, observacao: string) {
     if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido();
-    if (this.statusPagamento === StatusPagamento.PROCESSANDO) throw new NaoPodeAlterarPedido();
+    if (this.statusPagamento === StatusPagamento.PROCESSANDO)
+      throw new NaoPodeAlterarPedido();
 
     this.itens = this.itens.map((item) => {
       if (item.id != itemId) return item;
@@ -41,7 +43,8 @@ export class PedidoAggregate extends IdentifiableObject {
 
   removeItem(itemId: number) {
     if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido();
-    if (this.statusPagamento === StatusPagamento.PROCESSANDO) throw new NaoPodeAlterarPedido();
+    if (this.statusPagamento === StatusPagamento.PROCESSANDO)
+      throw new NaoPodeAlterarPedido();
 
     this.itens = this.itens.filter((item) => item.id != itemId);
   }
@@ -61,38 +64,45 @@ export class PedidoAggregate extends IdentifiableObject {
 
   podeSolicitarPagamento() {
     if (this.itens.length === 0) {
-        return false
+      return false;
     }
 
-    return this.statusPagamento === StatusPagamento.FALHOU || this.statusPagamento === StatusPagamento.PENDENTE
+    if (this.status !== Status.CRIANDO) {
+      return false;
+    }
+
+    return (
+      this.statusPagamento === StatusPagamento.FALHOU ||
+      this.statusPagamento === StatusPagamento.PENDENTE
+    );
   }
 
   marcarComoProcessando() {
-    this.statusPagamento = StatusPagamento.PROCESSANDO
+    this.statusPagamento = StatusPagamento.PROCESSANDO;
 
-    return this.toEntity()
+    return this.toEntity();
   }
 
   valorTotal() {
     return this.itens.reduce((total, item) => {
-        return total + (item.quantidade * item.precoUnitario)
-    }, 0)
+      return total + item.quantidade * item.precoUnitario;
+    }, 0);
   }
 
   pagamentoComSucesso(dataConfirmacao: Date) {
-    this.statusPagamento = StatusPagamento.SUCESSO
-    this.dataConfirmacaoPagamento = dataConfirmacao
+    this.statusPagamento = StatusPagamento.SUCESSO;
+    this.dataConfirmacaoPagamento = dataConfirmacao;
   }
 
   pagamentoFalhou() {
-    this.statusPagamento = StatusPagamento.FALHOU
+    this.statusPagamento = StatusPagamento.FALHOU;
   }
 
   iniciarPreparacao() {
-    this.status = Status.EM_PREPARACAO
+    this.status = Status.EM_PREPARACAO;
   }
 
   finalizarPedido() {
-    this.status = Status.FINALIZADO
+    this.status = Status.FINALIZADO;
   }
 }

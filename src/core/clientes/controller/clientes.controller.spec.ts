@@ -3,200 +3,249 @@ import { ClientesService } from '../clientes.service';
 import { ClientesRepositoryInterface } from '../repositories/clientes.repository';
 import { ClientesRepository } from '../../../externals/repositories/clientes.repository';
 import { Cliente } from '../entities/cliente.entity';
-import { ClienteException, ClienteNaoEncontrado, DuplicidadeDeCpf, DuplicidadeDeEmail } from '../exceptions/cliente.exception';
+import {
+  ClienteNaoEncontrado,
+  DuplicidadeDeCpf,
+  DuplicidadeDeEmail,
+} from '../exceptions/cliente.exception';
+import { PedidosRepository } from 'src/externals/repositories/pedidos.repository';
 
 describe('ClientesController', () => {
-    let repository: ClientesRepositoryInterface;
-    let controller: ClientesController;
+  let repository: ClientesRepositoryInterface;
+  let controller: ClientesController;
+  let pedidos: PedidosRepository;
 
-    beforeEach(async () => {
-        repository = new ClientesRepository(null)
-        controller = new ClientesController(new ClientesService(repository), repository)
+  beforeEach(async () => {
+    repository = new ClientesRepository(null);
+    controller = new ClientesController(
+      new ClientesService(repository),
+      (pedidos = new PedidosRepository(null, null)),
+    );
+  });
+
+  it('should create', async () => {
+    const input = {
+      nome: 'Jon Doe',
+      cpf: '999.999.999-99',
+      email: 'joao@example.com',
+    };
+
+    let savedClient = null;
+
+    jest.spyOn(repository, 'save').mockImplementation(async (client) => {
+      return (savedClient = client);
+    });
+    let testedCpf = null,
+      testedEmail = null;
+
+    jest.spyOn(repository, 'findByCpf').mockImplementation(async (cpf) => {
+      testedCpf = cpf;
+      return null;
     });
 
-    it('should create', async () => {
-        const input = {
-            nome: 'Jon Doe',
-            cpf: '999.999.999-99',
-            email: 'joao@example.com',
-        }
-
-        let savedClient = null;
-
-        jest.spyOn(repository, 'save').mockImplementation(async (client) => {
-            return savedClient = client;
-        })
-        let testedCpf = null, testedEmail = null;
-
-        jest.spyOn(repository, 'findByCpf').mockImplementation(async (cpf) => {
-            testedCpf = cpf;
-            return null
-        })
-
-        jest.spyOn(repository, 'findByEmail').mockImplementation(async (email) => {
-            testedEmail = email;
-            return null
-        })
-
-        await controller.create(input)
-
-        expect(savedClient).toEqual(input)
-        expect(testedCpf).toEqual(input.cpf)
-        expect(testedEmail).toEqual(input.email)
+    jest.spyOn(repository, 'findByEmail').mockImplementation(async (email) => {
+      testedEmail = email;
+      return null;
     });
 
-    it('finds all', async () => {
-        let all = [
-            Cliente.createFrom({ nome: 'jon', email: 'jon@example.com', cpf: '999.999.999-99' }),
-        ]
+    await controller.create(input);
 
-        jest.spyOn(repository, 'findAll').mockImplementation(async () => all)
+    expect(savedClient).toEqual(input);
+    expect(testedCpf).toEqual(input.cpf);
+    expect(testedEmail).toEqual(input.email);
+  });
 
-        let found = await controller.findAll()
+  it('finds all', async () => {
+    const all = [
+      Cliente.createFrom({
+        nome: 'jon',
+        email: 'jon@example.com',
+        cpf: '999.999.999-99',
+      }),
+    ];
 
-        expect(found).toEqual(all)
-    })
+    jest
+      .spyOn(repository, 'findAll')
+      .mockImplementation(async () => Promise.resolve(all));
 
-    it('finds one', async () => {
-        let cliente = Cliente.createFrom({ nome: 'jon', email: 'jon@example.com', cpf: '999.999.999-99' })
+    const found = await controller.findAll();
 
-        let queriedId = null;
+    expect(found).toEqual(all);
+  });
 
-        jest.spyOn(repository, 'findById').mockImplementation(async (id) => {
-            queriedId = id
-            return cliente
-        })
+  it('finds one', async () => {
+    let cliente = Cliente.createFrom({
+      nome: 'jon',
+      email: 'jon@example.com',
+      cpf: '999.999.999-99',
+    });
 
-        let found = await controller.findOne(123)
+    let queriedId = null;
 
-        expect(found).toBe(cliente)
-        expect(queriedId).toEqual(123)
-    })
+    jest.spyOn(repository, 'findById').mockImplementation(async (id) => {
+      queriedId = id;
+      return cliente;
+    });
 
-    it('find by cpf', async () => {
-        let cliente = Cliente.createFrom({ nome: 'jon', email: 'jon@example.com', cpf: '999.999.999-99' })
+    let found = await controller.findOne(123);
 
-        let queriedCpf = null;
+    expect(found).toBe(cliente);
+    expect(queriedId).toEqual(123);
+  });
 
-        jest.spyOn(repository, 'findByCpf').mockImplementation(async (cpf) => {
-            queriedCpf = cpf
-            return cliente
-        })
+  it('find by cpf', async () => {
+    let cliente = Cliente.createFrom({
+      nome: 'jon',
+      email: 'jon@example.com',
+      cpf: '999.999.999-99',
+    });
 
-        let found = await controller.findByCpf(cliente.cpf)
+    let queriedCpf = null;
 
-        expect(found).toBe(cliente)
-        expect(queriedCpf).toEqual(cliente.cpf)
-    })
+    jest.spyOn(repository, 'findByCpf').mockImplementation(async (cpf) => {
+      queriedCpf = cpf;
+      return cliente;
+    });
 
-    it('updates', async () => {
-        let cliente = Cliente.createFrom({ nome: 'jon', email: 'jon@example.com', cpf: '999.999.999-99' })
+    let found = await controller.findByCpf(cliente.cpf);
 
-        let testedCpf, testedEmail, queriedId, savedClient;
+    expect(found).toBe(cliente);
+    expect(queriedCpf).toEqual(cliente.cpf);
+  });
 
-        jest.spyOn(repository, 'findByCpf').mockImplementation(async (cpf) => {
-            testedCpf = cpf;
-            return null;
-        })
+  it('updates', async () => {
+    let cliente = Cliente.createFrom({
+      nome: 'jon',
+      email: 'jon@example.com',
+      cpf: '999.999.999-99',
+    });
 
-        jest.spyOn(repository, 'findByEmail').mockImplementation(async (email) => {
-            testedEmail = email;
-            return null;
-        })
+    let testedCpf, testedEmail, queriedId, savedClient;
 
-        jest.spyOn(repository, 'findById').mockImplementation(async (id) => {
-            queriedId = id;
-            // create a copy...
-            return Cliente.createFrom({...cliente});
-        })
+    jest.spyOn(repository, 'findByCpf').mockImplementation(async (cpf) => {
+      testedCpf = cpf;
+      return null;
+    });
 
-        jest.spyOn(repository, 'save').mockImplementation(async (cliente) => {
-            return savedClient = cliente;
-        })
+    jest.spyOn(repository, 'findByEmail').mockImplementation(async (email) => {
+      testedEmail = email;
+      return null;
+    });
 
-        let saved = await controller.update(123, {
-            nome: 'jane',
-            email: 'jane@example.com',
-            cpf: '999.999.999-01',
-        })
+    jest.spyOn(repository, 'findById').mockImplementation(async (id) => {
+      queriedId = id;
+      // create a copy...
+      return Cliente.createFrom({ ...cliente });
+    });
 
-        expect(savedClient).not.toEqual(cliente)
-        expect(saved).toEqual(savedClient)
-        expect(saved.nome).toEqual('jane')
-        expect(saved.email).toEqual('jane@example.com')
-        expect(saved.cpf).toEqual('999.999.999-01')
-        expect(testedCpf).toEqual(saved.cpf)
-        expect(testedEmail).toEqual(saved.email)
-    })
+    jest.spyOn(repository, 'save').mockImplementation(async (cliente) => {
+      return (savedClient = cliente);
+    });
 
-    it('fails when trying to update with duplicate CPF', async () => {
-        let cliente = Cliente.createFrom({ nome: 'jon', email: 'jon@example.com', cpf: '999.999.999-99' })
+    let saved = await controller.update(123, {
+      nome: 'jane',
+      email: 'jane@example.com',
+      cpf: '999.999.999-01',
+    });
 
-        jest.spyOn(repository, 'findByCpf').mockImplementation(async () => cliente)
+    expect(savedClient).not.toEqual(cliente);
+    expect(saved).toEqual(savedClient);
+    expect(saved.nome).toEqual('jane');
+    expect(saved.email).toEqual('jane@example.com');
+    expect(saved.cpf).toEqual('999.999.999-01');
+    expect(testedCpf).toEqual(saved.cpf);
+    expect(testedEmail).toEqual(saved.email);
+  });
 
-        try {
-            await controller.update(123, {
-                nome: 'jane',
-                email: 'jane@example.com',
-                cpf: '999.999.999-99',
-            })
+  it('fails when trying to update with duplicate CPF', async () => {
+    let cliente = Cliente.createFrom({
+      nome: 'jon',
+      email: 'jon@example.com',
+      cpf: '999.999.999-99',
+    });
 
-            fail('should have failed')
-        } catch (e) {
-            expect(e).toBeInstanceOf(DuplicidadeDeCpf)
-        }
-    })
+    jest.spyOn(repository, 'findByCpf').mockImplementation(async () => cliente);
 
-    it('fails when trying to update with duplicate email', async () => {
-        let cliente = Cliente.createFrom({ nome: 'jon', email: 'jon@example.com', cpf: '999.999.999-99' })
+    try {
+      await controller.update(123, {
+        nome: 'jane',
+        email: 'jane@example.com',
+        cpf: '999.999.999-99',
+      });
 
-        jest.spyOn(repository, 'findByCpf').mockImplementation(async () => null)
-        jest.spyOn(repository, 'findByEmail').mockImplementation(async () => cliente)
+      fail('should have failed');
+    } catch (e) {
+      expect(e).toBeInstanceOf(DuplicidadeDeCpf);
+    }
+  });
 
-        try {
-            await controller.update(123, {
-                nome: 'jane',
-                email: 'jon@example.com',
-                cpf: '999.999.999-99',
-            })
+  it('fails when trying to update with duplicate email', async () => {
+    let cliente = Cliente.createFrom({
+      nome: 'jon',
+      email: 'jon@example.com',
+      cpf: '999.999.999-99',
+    });
 
-            fail('should have failed')
-        } catch (e) {
-            expect(e).toBeInstanceOf(DuplicidadeDeEmail)
-        }
-    })
+    jest.spyOn(repository, 'findByCpf').mockImplementation(async () => null);
+    jest
+      .spyOn(repository, 'findByEmail')
+      .mockImplementation(async () => cliente);
 
-    it('fails when not found', async () => {
-        let cliente = Cliente.createFrom({ nome: 'jon', email: 'jon@example.com', cpf: '999.999.999-99' })
+    try {
+      await controller.update(123, {
+        nome: 'jane',
+        email: 'jon@example.com',
+        cpf: '999.999.999-99',
+      });
 
-        jest.spyOn(repository, 'findByCpf').mockImplementation(async () => null)
-        jest.spyOn(repository, 'findByEmail').mockImplementation(async () => null)
-        jest.spyOn(repository, 'findById').mockImplementation(async () => null)
+      fail('should have failed');
+    } catch (e) {
+      expect(e).toBeInstanceOf(DuplicidadeDeEmail);
+    }
+  });
 
-        try {
-            await controller.update(123, {
-                nome: 'jane',
-                email: 'jon@example.com',
-                cpf: '999.999.999-99',
-            })
+  it('fails when not found', async () => {
+    let cliente = Cliente.createFrom({
+      nome: 'jon',
+      email: 'jon@example.com',
+      cpf: '999.999.999-99',
+    });
 
-            fail('should have failed')
-        } catch (e) {
-            expect(e).toBeInstanceOf(ClienteNaoEncontrado)
-        }
-    })
+    jest.spyOn(repository, 'findByCpf').mockImplementation(async () => null);
+    jest.spyOn(repository, 'findByEmail').mockImplementation(async () => null);
+    jest.spyOn(repository, 'findById').mockImplementation(async () => null);
 
-    it('removes', async () => {
-        let id = 123;
+    try {
+      await controller.update(123, {
+        nome: 'jane',
+        email: 'jon@example.com',
+        cpf: '999.999.999-99',
+      });
 
-        let removedId;
+      fail('should have failed');
+    } catch (e) {
+      expect(e).toBeInstanceOf(ClienteNaoEncontrado);
+    }
+  });
 
-        jest.spyOn(repository, 'delete').mockImplementation(async (id) => {
-            removedId = id;
-        })
+  it('removes', async () => {
+    let id = 123;
 
-        await controller.remove(id)
+    let removedId;
+    let clienteIdPedidosCancelados;
 
-        expect(removedId).toEqual(id)
-    })
+    jest.spyOn(repository, 'delete').mockImplementation(async (id) => {
+      removedId = id;
+    });
+    jest
+      .spyOn(pedidos, 'cancelarPedidosPendentes')
+      .mockImplementation(async (clienteId) => {
+        clienteIdPedidosCancelados = clienteId;
+      });
+
+    await controller.remove(id);
+
+    expect(removedId).toEqual(id);
+    expect(clienteIdPedidosCancelados).toEqual(id);
+  });
 });

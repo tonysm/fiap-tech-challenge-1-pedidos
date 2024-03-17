@@ -8,7 +8,10 @@ import { PedidosRepository } from 'src/externals/repositories/pedidos.repository
 import { PedidosServiceInterface } from './pedido.service.interface';
 import { NaoPodeSolicitarPagamento } from './exceptions/pedido.exception';
 import { SolicitarPagamentoChannel } from 'src/externals/channels/solicitar.pagamento.channel';
-import { PedidoProducaoDTO, PrepararPedidoChannel } from 'src/externals/channels/preparar.pedido.channel';
+import {
+  PedidoProducaoDTO,
+  PrepararPedidoChannel,
+} from 'src/externals/channels/preparar.pedido.channel';
 
 @Injectable()
 export class PedidosService implements PedidosServiceInterface {
@@ -43,7 +46,11 @@ export class PedidosService implements PedidosServiceInterface {
     return pedidoAggregate.toEntity();
   }
 
-  async updateItem(pedidoId: number, itemId: number, input: UpdatePedidoItemDto) {
+  async updateItem(
+    pedidoId: number,
+    itemId: number,
+    input: UpdatePedidoItemDto,
+  ) {
     const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId);
 
     aggregate.atualizaItem(itemId, input.quantidade, input.observacao);
@@ -66,38 +73,43 @@ export class PedidosService implements PedidosServiceInterface {
   }
 
   async solicitarPagamento(pedidoId: number) {
-    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId)
+    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId);
 
-    if (! aggregate.podeSolicitarPagamento()) {
-        throw new NaoPodeSolicitarPagamento(aggregate.toEntity())
+    if (!aggregate.podeSolicitarPagamento()) {
+      throw new NaoPodeSolicitarPagamento(aggregate.toEntity());
     }
 
-    this.repository.save(aggregate.marcarComoProcessando())
+    this.repository.save(aggregate.marcarComoProcessando());
 
-    this.solicitarPagamentoChannel.solicitarPagamento(pedidoId, aggregate.valorTotal())
+    this.solicitarPagamentoChannel.solicitarPagamento(
+      pedidoId,
+      aggregate.valorTotal(),
+    );
 
-    return aggregate.toEntity()
+    return aggregate.toEntity();
   }
 
   async confirmarPagamento(pedidoId: number, pagoComSucesso: boolean) {
-    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId)
+    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId);
 
     if (pagoComSucesso) {
-        aggregate.pagamentoComSucesso(new Date)
-        aggregate.iniciarPreparacao()
+      aggregate.pagamentoComSucesso(new Date());
+      aggregate.iniciarPreparacao();
     } else {
-        aggregate.pagamentoFalhou()
+      aggregate.pagamentoFalhou();
     }
 
-    const entity = aggregate.toEntity()
+    const entity = aggregate.toEntity();
 
     if (pagoComSucesso) {
-       this.prepararPedidoChannel.prepararPedido(PedidoProducaoDTO.fromEntity(entity))
+      this.prepararPedidoChannel.prepararPedido(
+        PedidoProducaoDTO.fromEntity(entity),
+      );
     }
 
     this.repository.save(entity);
 
-    return entity
+    return entity;
   }
 
   async finalizar(pedidoId: number) {
@@ -106,5 +118,9 @@ export class PedidosService implements PedidosServiceInterface {
     aggregate.finalizarPedido();
 
     return await this.repository.save(aggregate.toEntity());
+  }
+
+  cancelarPedidosPendentes(clienteId: number) {
+    this.repository.cancelarPedidosPendentes(clienteId);
   }
 }

@@ -6,9 +6,11 @@ export interface PedidosRepositoryInterface {
   findOneOrFail(id: number): Promise<Pedido>;
 
   findOneItem(id: number): Promise<Item>;
-  deleteItem(id: number);
+  deleteItem(id: number): void;
 
-  save(pedido: Pedido);
+  save(pedido: Pedido): Promise<Pedido>;
+
+  cancelarPedidosPendentes(clienteId: number): void;
 }
 
 export const PedidosRepositoryInterface = Symbol('PedidosRepositoryInterface');

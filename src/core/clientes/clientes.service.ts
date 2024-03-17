@@ -17,11 +17,17 @@ export class ClientesService implements ClientesServiceInterface {
   async create(input: CreateClienteDto) {
     await this.guardAgainstClientDuplication(input.cpf, input.email);
 
-    return Cliente.createFrom({
-      nome: input.nome,
-      cpf: input.cpf,
-      email: input.email,
-    });
+    return this.save(
+      Cliente.createFrom({
+        nome: input.nome,
+        cpf: input.cpf,
+        email: input.email,
+      }),
+    );
+  }
+
+  save(cliente: Cliente) {
+    return this.repository.save(cliente);
   }
 
   findAll() {
@@ -45,11 +51,15 @@ export class ClientesService implements ClientesServiceInterface {
       throw new ClienteException.ClienteNaoEncontrado();
     }
 
-    return cliente.fill({ nome, cpf, email });
+    return this.save(cliente.fill({ nome, cpf, email }));
   }
 
   remove(id: number) {
     this.repository.delete(id);
+  }
+
+  isActive(id: number): Promise<boolean> {
+    return this.repository.isActive(id);
   }
 
   private async guardAgainstClientDuplication(

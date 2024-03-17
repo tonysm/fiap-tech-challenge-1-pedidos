@@ -9,11 +9,13 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Item } from './item.entity';
+import { IsNumber } from 'class-validator';
 
 export enum Status {
   CRIANDO = 'CRIANDO',
   EM_PREPARACAO = 'EM_PREPARACAO',
   FINALIZADO = 'FINALIZADO',
+  CANCELADO = 'CANCELADO',
 }
 
 export enum StatusPagamento {
@@ -29,12 +31,19 @@ export class Pedido {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(/* istanbul ignore next */ () => Cliente, { nullable: true, eager: true })
+  @ManyToOne(/* istanbul ignore next */ () => Cliente, {
+    nullable: true,
+    eager: true,
+  })
   @JoinColumn()
   cliente?: Cliente;
 
   @ApiProperty({ description: 'Itens do pedido', type: Item })
-  @OneToMany(/* istanbul ignore next */ () => Item, /* istanbul ignore next */ (item) => item.pedido, { eager: true, cascade: true })
+  @OneToMany(
+    /* istanbul ignore next */ () => Item,
+    /* istanbul ignore next */ (item) => item.pedido,
+    { eager: true, cascade: true },
+  )
   itens: Item[];
 
   @Column({ type: 'enum', enum: Status })
