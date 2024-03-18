@@ -22,7 +22,7 @@ import { SolicitarPagamentoChannel } from 'src/externals/channels/solicitar.paga
 import { ClientesService } from '../clientes/clientes.service';
 import { ClientesServiceInterface } from '../clientes/clientes.service.interface';
 import { ProducaoServiceInterface } from './services/producao.service.interface';
-import { ProducaoApiService, ProducaoService } from 'src/externals/services/producao.service';
+import { ProducaoApiService, ProducaoFactory, ProducaoService } from 'src/externals/services/producao.service';
 import { PedidosFinalizadosAPI } from 'src/externals/apis/pedidos_finalizados.api';
 
 @Module({
@@ -64,13 +64,7 @@ import { PedidosFinalizadosAPI } from 'src/externals/apis/pedidos_finalizados.ap
     },
     {
         provide: ProducaoService,
-        useFactory(config: ConfigService, http: HttpService) {
-            if (config.getOrThrow<string>('PRODUCAO_PROVIDER') === 'fake') {
-                return new ProducaoService();
-            }
-
-            return new ProducaoApiService(config.getOrThrow<string>('PRODUCAO_API_URL'), http);
-        },
+        useFactory: ProducaoFactory,
         inject: [ConfigService, HttpService],
     },
     PubSubService,

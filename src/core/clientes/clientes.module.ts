@@ -20,7 +20,7 @@ import { PedidosRepository } from 'src/externals/repositories/pedidos.repository
 import { PedidosRepositoryInterface } from '../pedidos/repositories/pedidos.repository';
 import { Item } from '../pedidos/entities/item.entity';
 import { ProducaoServiceInterface } from '../pedidos/services/producao.service.interface';
-import { ProducaoApiService, ProducaoService } from 'src/externals/services/producao.service';
+import { ProducaoApiService, ProducaoFactory, ProducaoService } from 'src/externals/services/producao.service';
 import { HttpModule, HttpService } from '@nestjs/axios';
 
 @Module({
@@ -57,13 +57,7 @@ import { HttpModule, HttpService } from '@nestjs/axios';
     },
     {
         provide: ProducaoService,
-        useFactory(config: ConfigService, http: HttpService) {
-            if (config.getOrThrow<string>('PRODUCAO_PROVIDER') === 'fake') {
-                return new ProducaoService();
-            }
-
-            return new ProducaoApiService(config.getOrThrow<string>('PRODUCAO_API_URL'), http);
-        },
+        useFactory: ProducaoFactory,
         inject: [ConfigService, HttpService],
     },
     PedidoAggregateFactory,

@@ -1,4 +1,5 @@
 import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { AxiosError } from 'axios';
 import { catchError, firstValueFrom } from 'rxjs';
 import { ProducaoServiceIndisponivelException } from 'src/core/pedidos/exceptions/servicos.exception';
@@ -13,6 +14,14 @@ export class ProducaoService implements ProducaoServiceInterface {
     /* istanbul ignore next */
     console.log('Fingindo iniciar produção...', { producao: pedidoProducaoDTO });
   }
+}
+
+export const ProducaoFactory = (config: ConfigService, http: HttpService) => {
+    if (config.getOrThrow<string>('PRODUCAO_PROVIDER') === 'fake') {
+        return new ProducaoService();
+    }
+
+    return new ProducaoApiService(config.getOrThrow<string>('PRODUCAO_API_URL'), http);
 }
 
 export class ProducaoApiService implements ProducaoServiceInterface {

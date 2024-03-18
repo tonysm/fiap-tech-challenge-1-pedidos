@@ -2,9 +2,10 @@ import { HttpService } from "@nestjs/axios"
 import { AxiosResponse } from "axios"
 import { of, throwError } from "rxjs"
 import { ProducaoServiceIndisponivelException } from "src/core/pedidos/exceptions/servicos.exception"
-import { ProducaoApiService } from "./producao.service"
+import { ProducaoApiService, ProducaoFactory, ProducaoService } from "./producao.service"
 import { PedidoProducaoDTO } from "src/core/pedidos/services/producao.service.interface"
 import { Pedido } from "src/core/pedidos/entities/pedido.entity"
+import { ConfigService } from "@nestjs/config"
 
 describe('ProducaoService', () => {
     let serviceUrl = 'http://example.com/producao-service'
@@ -18,6 +19,17 @@ describe('ProducaoService', () => {
         entity.id = 123
         pedido = PedidoProducaoDTO.fromEntity(entity)
     })
+
+    it('creates correct client via factories', async () => {
+        expect(ProducaoFactory(new ConfigService({
+            PRODUCAO_PROVIDER: 'fake',
+        }), null)).toBeInstanceOf(ProducaoService);
+
+        expect(ProducaoFactory(new ConfigService({
+            PRODUCAO_PROVIDER: 'api',
+            PRODUCAO_API_URL: 'http://example.com',
+        }), null)).toBeInstanceOf(ProducaoApiService);
+    });
 
     it('requests producao calls external service with success', async () => {
         http = new HttpService()
