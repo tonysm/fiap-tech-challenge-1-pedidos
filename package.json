@@ -79,14 +79,14 @@
     ],
     "coveragePathIgnorePatterns": [
       "interfaces",
-      ".spec.ts",
-      ".interface.ts",
-      ".module.ts",
-      ".object.ts",
-      ".dto.ts",
-      ".validator.ts",
-      ".exception.ts",
-      "main.ts"
+      ".spec",
+      ".interface",
+      ".module",
+      ".object",
+      ".dto",
+      ".validator",
+      ".exception",
+      "main"
     ],
     "coverageDirectory": "../coverage",
     "coverageReporters": [
