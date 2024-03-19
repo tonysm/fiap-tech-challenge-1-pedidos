@@ -24,7 +24,7 @@ export class PubSubService {
         
         try {
             await topic.publish(dataBuffer)
-            console.log(`[SERVICO-PEDIDO][TOPIC] - Mensagem enviada no topico ${topicName} ${JSON.parse(data)}`)
+            console.log(`[SERVICO-PEDIDO][TOPIC] - Mensagem enviada no topico ${topicName} ${JSON.stringify(data)}`)
         } catch (error) {
             console.error(`Error publishing on ${topic.name}:`, error)
         }
@@ -36,7 +36,7 @@ export class PubSubService {
 
         subscription.on("message", (message) => {
             const data = message.data.toString()
-            console.log(`[SERVICO-PEDIDO][TOPIC] - Mensagem recebida no topico ${topicName} ${message}`)
+            console.log(`[SERVICO-PEDIDO][TOPIC] - Mensagem recebida no topico ${topicName} ${data}`)
             callback(data)
             message.ack()
         })
