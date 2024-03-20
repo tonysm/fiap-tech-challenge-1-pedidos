@@ -1,30 +1,30 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CreatePedidoDto } from 'src/externals/apis/dto/create-pedido.dto';
-import { Status, StatusPagamento } from './entities/pedido.entity';
 import { PedidoAggregateFactory } from './aggregates/pedido.aggregate.factory';
-import { PagamentoFalhou, StatusInvalidoException } from './exceptions/pedido.exception';
 import { ItemVO } from './vo/item.vo';
 import { UpdatePedidoItemDto } from 'src/externals/apis/dto/update-pedido-item.dto';
-import { PagamentoGateway } from '../pagamentos/pagamento.gateway';
 import { PedidosRepositoryInterface } from './repositories/pedidos.repository';
 import { PedidosRepository } from 'src/externals/repositories/pedidos.repository';
 import { PedidosServiceInterface } from './pedido.service.interface';
-import { ConfirmaPedidoDto } from 'src/externals/apis/dto/confirma-pedido.dto';
+import { NaoPodeSolicitarPagamento } from './exceptions/pedido.exception';
+import { SolicitarPagamentoChannel } from 'src/externals/channels/solicitar.pagamento.channel';
+import { ProducaoService } from 'src/externals/services/producao.service';
+import { PedidoProducaoDTO, ProducaoServiceInterface } from './services/producao.service.interface';
 
 @Injectable()
 export class PedidosService implements PedidosServiceInterface {
   constructor(
+    private readonly pedidoAggregateFactory: PedidoAggregateFactory,
     @Inject(PedidosRepository)
     private readonly repository: PedidosRepositoryInterface,
-    private readonly pedidoAggregateFactory: PedidoAggregateFactory
+    @Inject(SolicitarPagamentoChannel)
+    private readonly solicitarPagamentoChannel: SolicitarPagamentoChannel,
+    @Inject(ProducaoService)
+    private readonly producao: ProducaoServiceInterface,
   ) {}
 
   findAll() {
     return this.repository.findAll();
-  }
-
-  findAllParaCozinha() {
-    return this.repository.findAllParaCozinha();
   }
 
   findOne(id: number) {
@@ -32,8 +32,8 @@ export class PedidosService implements PedidosServiceInterface {
   }
 
   async create(input: CreatePedidoDto) {
-    const pedidoAggregate = await this.pedidoAggregateFactory.createNew(input)
-    return pedidoAggregate.toEntity()
+    const pedidoAggregate = await this.pedidoAggregateFactory.createNew(input);
+    return pedidoAggregate.toEntity();
   }
 
   async addItem(id: number, item: ItemVO) {
@@ -41,15 +41,19 @@ export class PedidosService implements PedidosServiceInterface {
 
     pedidoAggregate.adicionarItem(item);
 
-    return pedidoAggregate.toEntity()
+    return pedidoAggregate.toEntity();
   }
 
-  async updateItem(pedidoId: number, itemId: number, input: UpdatePedidoItemDto) {
+  async updateItem(
+    pedidoId: number,
+    itemId: number,
+    input: UpdatePedidoItemDto,
+  ) {
     const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId);
 
-    aggregate.atualizaItem(itemId, input.quantidade, input.observacao)
+    aggregate.atualizaItem(itemId, input.quantidade, input.observacao);
 
-    return aggregate.toEntity()
+    return aggregate.toEntity();
   }
 
   findOneItem(id: number) {
@@ -57,67 +61,62 @@ export class PedidosService implements PedidosServiceInterface {
   }
 
   async removeItem(pedidoId: number, id: number) {
-    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId)
+    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId);
 
-    aggregate.removeItem(id)
+    aggregate.removeItem(id);
 
     this.repository.deleteItem(id);
-    return aggregate.toEntity()
+
+    return aggregate.toEntity();
   }
 
-  async confirmaPagamento(pedidoId: number, input: ConfirmaPedidoDto) {
-    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId)
+  async solicitarPagamento(pedidoId: number) {
+    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId);
 
-    await aggregate.confirmaPagamento(input);
-
-    return aggregate.toEntity()
-  }
-
-  async checkout(pedidoId: number, pagamentos: PagamentoGateway) {
-    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId)
-    aggregate.checkout(pagamentos)
-    return aggregate.toEntity()
-  }
-
-  async atualizaStatusDoPedido(id: number, status: Status) {
-    switch (status) {
-      case Status.EM_PREPARACAO:
-        return this.iniciarPreparacaoDoPedido(id)
-      case Status.PRONTO:
-        return this.encerrarPreparacaoDoPedido(id)
-      case Status.FINALIZADO:
-        return this.finalizarPedido(id)
-      default:
-        throw new StatusInvalidoException()
+    if (!aggregate.podeSolicitarPagamento()) {
+      throw new NaoPodeSolicitarPagamento(aggregate.toEntity());
     }
+
+    this.repository.save(aggregate.marcarComoProcessando());
+
+    this.solicitarPagamentoChannel.solicitarPagamento(
+      pedidoId,
+      aggregate.valorTotal(),
+    );
+
+    return aggregate.toEntity();
   }
 
-  private async iniciarPreparacaoDoPedido(id: number) {
-    const aggregate = await this.pedidoAggregateFactory.createFromId(id)
+  async confirmarPagamento(pedidoId: number, pagoComSucesso: boolean) {
+    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId);
 
-    aggregate.iniciarPreparacaoDoPedido()
+    if (pagoComSucesso) {
+      aggregate.pagamentoComSucesso(new Date());
+      aggregate.iniciarPreparacao();
+    } else {
+      aggregate.pagamentoFalhou();
+    }
 
-    return aggregate.toEntity()
+    const entity = aggregate.toEntity();
+
+    if (pagoComSucesso) {
+      this.producao.iniciarProducao(PedidoProducaoDTO.fromEntity(entity));
+    }
+
+    this.repository.save(entity);
+
+    return entity;
   }
 
-  private async encerrarPreparacaoDoPedido(id: number) {
-    const aggregate = await this.pedidoAggregateFactory.createFromId(id)
+  async finalizar(pedidoId: number) {
+    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId);
 
-    aggregate.encerrarPreparacaoDoPedido()
+    aggregate.finalizarPedido();
 
-    return aggregate.toEntity()
+    return await this.repository.save(aggregate.toEntity());
   }
 
-  private async finalizarPedido(id: number) {
-    const aggregate = await this.pedidoAggregateFactory.createFromId(id)
-
-    aggregate.finalizarPedido()
-
-    return aggregate.toEntity()
-  }
-
-  async statusPagamento(pedidoId: number) {
-    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId)
-    return aggregate.getStatusPagamento()
+  cancelarPedidosPendentes(clienteId: number) {
+    this.repository.cancelarPedidosPendentes(clienteId);
   }
 }

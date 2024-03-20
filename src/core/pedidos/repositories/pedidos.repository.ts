@@ -1,15 +1,16 @@
-import { Item } from "../entities/item.entity";
-import { Pedido } from "../entities/pedido.entity";
+import { Item } from '../entities/item.entity';
+import { Pedido } from '../entities/pedido.entity';
 
 export interface PedidosRepositoryInterface {
-    findAll(): Promise<Pedido[]>;
-    findAllParaCozinha(): Promise<Pedido[]>;
-    findOneOrFail(id: number): Promise<Pedido>;
+  findAll(): Promise<Pedido[]>;
+  findOneOrFail(id: number): Promise<Pedido>;
 
-    findOneItem(id: number): Promise<Item>;
-    deleteItem(id: number);
+  findOneItem(id: number): Promise<Item>;
+  deleteItem(id: number): void;
 
-    save(pedido: Pedido);
+  save(pedido: Pedido): Promise<Pedido>;
+
+  cancelarPedidosPendentes(clienteId: number): void;
 }
 
-export const PedidosRepositoryInterface = Symbol('PedidosRepositoryInterface')
+export const PedidosRepositoryInterface = Symbol('PedidosRepositoryInterface');

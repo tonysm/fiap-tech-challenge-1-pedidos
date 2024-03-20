@@ -8,33 +8,33 @@ import { PedidosControllerInterface } from 'src/core/pedidos/controller/pedidos.
 @Controller('pedidos')
 @ApiTags('pedidos')
 export class PedidosAPI {
-    constructor(
-      @Inject(PedidosController)
-      private readonly pedidosController: PedidosControllerInterface,
-    ) {}
+  constructor(
+    @Inject(PedidosController)
+    private readonly pedidosController: PedidosControllerInterface,
+  ) {}
 
-    @Get()
-    @ApiOperation({ summary: "Lista os pedidos" })
-    @ApiResponse({
-        status: 200,
-        description: 'Lista de pedidos',
-        type: Array<Pedido>,
-    })
-    index() {
-      return this.pedidosController.findAll()
-    }
+  @Get()
+  @ApiOperation({ summary: 'Lista os pedidos' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de pedidos',
+    type: Array<Pedido>,
+  })
+  index() {
+    return this.pedidosController.findAll();
+  }
 
-    @Post()
-    @ApiOperation({ summary: 'Inicia pedido' })
-    @ApiResponse({ status: 403, description: 'Forbidden.' })
-    @ApiResponse({ status: 200, type: Pedido })
-    async create(@Body() input: CreatePedidoDto) {
-      return this.pedidosController.create(input);
-    }
+  @Post()
+  @ApiOperation({ summary: 'Inicia pedido' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 200, type: Pedido })
+  async create(@Body() input: CreatePedidoDto) {
+    return this.pedidosController.create(input);
+  }
 
-    @ApiOperation({ summary: 'Busca pedido por id' })
-    @Get(':id')
-    show(@Param('id') id: number) {
-      return this.pedidosController.findOne(id);
-    }
+  @ApiOperation({ summary: 'Busca pedido por id' })
+  @Get(':id')
+  show(@Param('id') id: number) {
+    return this.pedidosController.findOne(id);
+  }
 }

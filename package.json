@@ -20,28 +20,33 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@google-cloud/pubsub": "^4.3.2",
+    "@nestjs/axios": "^3.0.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.2",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^6.3.0",
     "@nestjs/typeorm": "^9.0.1",
+    "axios": "^1.6.5",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "cpf-cnpj-validator": "^1.0.3",
     "mysql2": "^3.3.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
-    "typeorm": "^0.3.16"
+    "typeorm": "^0.3.16",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
-    "@nestjs/testing": "^9.0.0",
+    "@nestjs/testing": "^9.4.3",
     "@types/express": "^4.17.13",
     "@types/jest": "29.5.1",
     "@types/node": "18.16.12",
     "@types/supertest": "^2.0.11",
+    "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.0.1",
@@ -50,6 +55,7 @@
     "jest": "29.5.0",
     "prettier": "^2.3.2",
     "source-map-support": "^0.5.20",
+    "sqlite3": "^5.1.7",
     "supertest": "^6.1.3",
     "ts-jest": "29.1.0",
     "ts-loader": "^9.2.3",
@@ -71,7 +77,25 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
+    "coveragePathIgnorePatterns": [
+      "interfaces",
+      ".spec.ts",
+      ".interface.ts",
+      ".module.ts",
+      ".object.ts",
+      ".dto.ts",
+      ".validator.ts",
+      ".exception.ts",
+      "main.ts"
+    ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "coverageReporters": [
+      "html",
+      "lcov"
+    ],
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    }
   }
 }

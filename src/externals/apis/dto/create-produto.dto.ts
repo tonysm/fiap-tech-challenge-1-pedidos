@@ -5,7 +5,7 @@ import { Categoria } from "../../../core/produtos/entities/produto.entity";
 export class CreateProdutoDto {
     @IsString()
     @ApiProperty({ example: 'X-Burger', description: 'O nome do produto'})
-    readonly nome: String;
+    readonly nome: string;
 
     @IsString()
     @ApiProperty({ example: Categoria.LANCHE, description: 'A categoria do produto', enum: Categoria })
@@ -13,7 +13,7 @@ export class CreateProdutoDto {
 
     @IsString()
     @ApiProperty({ example: 'Pão de batata, molho de tomate, queijo mussarela, finíssimas fatias de cebola, ovo, azeitonas verde, milho verde e rodelas de linguiça calabresa defumada', description: 'A descrição do produto'})
-    readonly descricao: String;
+    readonly descricao: string;
 
     @IsNumber()
     @ApiProperty({ example: '9.99', description: 'O preço unitário do produto'})

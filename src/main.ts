@@ -3,6 +3,15 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { HttpStatus, ValidationPipe } from '@nestjs/common';
 import { useContainer } from 'class-validator';
+import { ConfirmarPagamentoChannel } from './externals/channels/confirmar.pagamento.channel';
+
+async function bootstrapChannels(app) {
+  const channels = [
+    app.get(ConfirmarPagamentoChannel),
+  ];
+
+  await Promise.all(channels.map(channel => channel.registerMessageConsumer()));
+}
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,7 +24,14 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  app.useGlobalPipes(new ValidationPipe({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY, transform: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      transform: true,
+    }),
+  );
+
+  bootstrapChannels(app)
 
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
